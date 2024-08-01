@@ -20,7 +20,8 @@ def index():
 def hello():
     if request.method == "POST":
         print(request.form["Name"])
-        cur = get_db().cursor()
+        conn = get_db()
+        cur = conn.cursor()
         cur.execute(
             "INSERT INTO items (name, category, quantity, notes) values (?,?,?,?)",
             (
@@ -30,6 +31,7 @@ def hello():
                 request.form["Notes"],
             ),
         )
+        conn.commit()
     cur = get_db().cursor()
     cur.execute("SELECT * FROM items")
     rows = cur.fetchall()
