@@ -12,7 +12,7 @@ def index():
     cur = get_db().cursor()
     cur.execute("SELECT * FROM items")
     print(cur.fetchall())
-    return "<p>Hello, World????!a test deploy</p>"
+    return "<p>Hello, World????!</p>"
 
 
 @app.route("/index/")
