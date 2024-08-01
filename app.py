@@ -1,6 +1,6 @@
 import sqlite3
 from flask import g
-from flask import Flask
+from flask import Flask, request
 
 from flask import render_template
 
@@ -15,13 +15,25 @@ def index():
     return "<p>Hello, World!!! Hi Shara</p>"
 
 
-@app.route("/index/")
-@app.route("/index/<name>")
-def hello(name=None):
+@app.route("/index/", methods=["POST", "GET"])
+# @app.route("/index/<name>")
+def hello():
+    if request.method == "POST":
+        print(request.form["Name"])
+        cur = get_db().cursor()
+        cur.execute(
+            "INSERT INTO items (name, category, quantity, notes) values (?,?,?,?)",
+            (
+                request.form["Name"],
+                request.form["Category"],
+                request.form["Quantity"],
+                request.form["Notes"],
+            ),
+        )
     cur = get_db().cursor()
     cur.execute("SELECT * FROM items")
     rows = cur.fetchall()
-    return render_template("index.html", person=name, rows=rows)
+    return render_template("index.html", rows=rows)
 
 
 # def get_records():
