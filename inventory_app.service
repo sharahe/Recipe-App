@@ -1,0 +1,13 @@
+[Unit]
+Description=inventory_app
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/inventory_app
+ExecStart=/var/www/inventory_app/.venv/bin/flask run --host 0.0.0.0
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
