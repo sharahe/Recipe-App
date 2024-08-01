@@ -6,7 +6,7 @@ After=network.target
 User=www-data
 Group=www-data
 WorkingDirectory=/var/www/inventory_app
-ExecStart=/var/www/inventory_app/.venv/bin/flask run --host 0.0.0.0
+ExecStart=/var/www/inventory_app/.venv/bin/flask run
 Restart=on-abort
 
 [Install]
