@@ -68,6 +68,7 @@ body {
   flex-direction: column;
   align-items: center;
   background-color: var(--neutral-white);
+  padding: 50px;
 }
 .recipe-input {
   padding: 10px;
@@ -85,4 +86,55 @@ div.recipe-input div {
 }
 .form-id {
   border-radius: 10px;
+}
+.tag {
+  background-color: var(--secondary-brown);
+  width: fit-content;
+  padding: 5px 15px 5px 15px;
+  border-radius: 14px;
+  margin: 5px;
+}
+img {
+  border-radius: 10px;
+}
+.recipe-body h1 {
+  display: flex;
+  justify-content: center;
+}
+.recipe-time-table {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  background-color: var(--secondary-green);
+  padding: 10px;
+}
+.recipe-time-header {
+  background-color: var(--primary-green);
+  border: 1px solid var(--secondary-green);
+  font-size: 15px;
+  text-align: center;
+}
+.recipe-time-value {
+  font-size: 15px;
+  text-align: center;
+}
+.recipe-serving-size {
+  display: grid;
+  grid: auto;
+  background-color: var(--secondary-green);
+  padding: 10px;
+}
+.recipe-serving-header {
+  background-color: var(--primary-green);
+  border: 1px solid var(--secondary-green);
+  font-size: 15px;
+  text-align: center;
+}
+.recipe-serving-value {
+  font-size: 15px;
+  text-align: center;
+}
+.recipe-image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

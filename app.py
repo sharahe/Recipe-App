@@ -1,6 +1,6 @@
 import sqlite3
 from flask import g
-from flask import Flask, request
+from flask import Flask, request, redirect
 from flask import render_template
 
 app = Flask(__name__)
@@ -71,6 +71,43 @@ def recipes_add():
     return render_template("add_recipe.html")
 
 
+@app.route("/recipes/<int:recipe_id>")
+def recipe(recipe_id):
+    cur = get_db().cursor()
+    cur.execute("SELECT * FROM recipes WHERE recipe_id = ?", (recipe_id,))
+    rows = cur.fetchall()
+    print(rows)
+    return render_template("recipe.html", rows=rows)
+
+
+@app.route("/recipes/<int:recipe_id>/edit", methods=["POST", "GET"])
+def recipe_edit(recipe_id):
+    cur = get_db().cursor()
+    cur.execute("SELECT * FROM recipes WHERE recipe_id = ?", (recipe_id,))
+    rows = cur.fetchall()
+    if request.method == "POST":
+        print(request.form["name"])
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute(
+            "UPDATE recipes SET recipe_name = ?, cuisine = ?, serving_size = ?, prep_time = ?, cook_time = ?, total_time = ?, instructions = ?, additional_notes = ? WHERE recipe_id = ?",
+            (
+                request.form["name"],
+                request.form["cuisine"],
+                request.form["serving-size"],
+                request.form["prep-time"],
+                request.form["cook-time"],
+                float(request.form["prep-time"]) + float(request.form["cook-time"]),
+                request.form["instructions"],
+                request.form["notes"],
+                recipe_id,
+            ),
+        )
+        conn.commit()
+        return redirect("/recipes/" + str(recipe_id))
+    return render_template("edit_recipe.html", rows=rows)
+
+
 # def get_records():
 #     with conn:
 #         cur.execute("SELECT * FROM items")
@@ -83,6 +120,7 @@ def get_db():
     db = getattr(g, "_database", None)
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
+        db.row_factory = sqlite3.Row
     return db
 
 

@@ -11,7 +11,9 @@
 <div id="gallery">
   <div class="gallery-row">
     {% for row in rows %}
-    <div class="recipe">{{row[7]}}</div>
+    <div class="recipe">
+      <a href="/recipes/{{row[0]}}"> <div class="recipe">{{row[1]}}</div></a>
+    </div>
     {% endfor %}
   </div>
 </div>
