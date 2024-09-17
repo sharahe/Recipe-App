@@ -1,0 +1,23 @@
+{% extends "base.html" %} {% block body %}
+
+<div id="what-to-eat">
+  <div>Are you hungryyy?</div>
+  <div id="im-hungry">Well, I'm hungry</div>
+  <div class="button">Surprise Recipe Here</div>
+</div>
+<div id="input-wrapper">
+  <input type="text" id="search-bar" />
+</div>
+<div id="gallery">
+  <div class="gallery-row">
+    {% for row in rows %}
+    <div class="recipe">{{row[7]}}</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+<!-- TODO:
+ - add image to cards
+ - add title/recipe names to cards
+ - add category tag to the cards -->

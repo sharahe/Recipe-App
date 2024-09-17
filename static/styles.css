@@ -1,0 +1,88 @@
+:root {
+  --primary-green: #828868;
+  --secondary-green: #dcd6cb;
+  --neutral-white: #e9e3dd;
+  --primary-brown: #694a34;
+  --secondary-brown: #bea691;
+}
+body {
+  margin: 0;
+}
+#banner {
+  background-color: var(--primary-green);
+  padding: 10px;
+  color: var(--primary-brown);
+  text-align: center;
+  width: 100%;
+}
+#what-to-eat {
+  background-color: var(--secondary-green);
+  padding: 15px;
+  color: var(--primary-brown);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.button {
+  background-color: var(--primary-brown);
+  padding: 10px;
+  color: var(--neutral-white);
+  border-radius: 8px;
+}
+#im-hungry {
+  padding: 5px;
+}
+#input-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70px;
+}
+#search-bar {
+  width: 400px;
+}
+.recipe {
+  width: 31%;
+  height: 200px;
+  background-color: var(--neutral-white);
+  border-radius: 5px;
+}
+.gallery-row {
+  display: flex;
+  padding: 20px;
+  /* justify-content: center; */
+  flex-wrap: wrap;
+  row-gap: 20px;
+  column-gap: 20px;
+}
+.gallery {
+  display: flex;
+  align-items: center;
+}
+.recipe-details {
+  background-color: var(--secondary-green);
+  padding: 20px;
+}
+.recipe-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--neutral-white);
+}
+.recipe-input {
+  padding: 10px;
+}
+
+div.recipe-input input {
+  border-radius: 8px;
+  border: 1px solid gray;
+}
+div.recipe-input div {
+  height: 20px;
+}
+.recipe-ingredients {
+  border-radius: 8px;
+}
+.form-id {
+  border-radius: 10px;
+}

@@ -1,7 +1,6 @@
 import sqlite3
 from flask import g
 from flask import Flask, request
-
 from flask import render_template
 
 app = Flask(__name__)
@@ -12,12 +11,11 @@ def index():
     cur = get_db().cursor()
     cur.execute("SELECT * FROM items")
     print(cur.fetchall())
-    return "<p>Hello, World!!! Hi Shara</p>"
+    return "<p>Hello, World!!! Main Page</p>"
 
 
 @app.route("/index/", methods=["POST", "GET"])
-# @app.route("/index/<name>")
-def hello():
+def hello_index():
     if request.method == "POST":
         print(request.form["Name"])
         conn = get_db()
@@ -36,6 +34,41 @@ def hello():
     cur.execute("SELECT * FROM items")
     rows = cur.fetchall()
     return render_template("index.html", rows=rows)
+
+
+@app.route("/recipes/")
+def recipes():
+    cur = get_db().cursor()
+    cur.execute("SELECT * FROM recipes")
+    rows = cur.fetchall()
+    print(rows)
+    return render_template("recipes.html", rows=rows)
+
+
+@app.route("/recipes/add/", methods=["POST", "GET"])
+def recipes_add():
+    if request.method == "POST":
+        print(request.form["name"])
+
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute(
+            "INSERT INTO recipes ( recipe_name, cuisine, serving_size, prep_time, cook_time, total_time, instructions, additional_notes) values (?,?,?,?,?,?,?,?)",
+            (
+                # request.form["recipe_id"], # autoincrements on its own?
+                request.form["name"],
+                request.form["cuisine"],
+                request.form["serving-size"],
+                request.form["prep-time"],
+                request.form["cook-time"],
+                float(request.form["prep-time"]) + float(request.form["cook-time"]),
+                request.form["instructions"],
+                request.form["notes"],
+                # request.form["img_str_file"],
+            ),
+        )
+        conn.commit()
+    return render_template("add_recipe.html")
 
 
 # def get_records():
