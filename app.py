@@ -39,7 +39,7 @@ def hello_index():
 @app.route("/recipes/")
 def recipes():
     cur = get_db().cursor()
-    cur.execute("SELECT * FROM recipes")
+    cur.execute("SELECT * FROM recipes WHERE deleted=0")
     rows = cur.fetchall()
     print(rows)
     return render_template("recipes.html", rows=rows)
@@ -68,13 +68,14 @@ def recipes_add():
             ),
         )
         conn.commit()
+        return redirect("/recipes/" + str(cur.lastrowid))
     return render_template("add_recipe.html")
 
 
 @app.route("/recipes/<int:recipe_id>")
 def recipe(recipe_id):
     cur = get_db().cursor()
-    cur.execute("SELECT * FROM recipes WHERE recipe_id = ?", (recipe_id,))
+    cur.execute("SELECT * FROM recipes WHERE recipe_id = ? AND deleted=0", (recipe_id,))
     rows = cur.fetchall()
     print(rows)
     return render_template("recipe.html", rows=rows)
@@ -83,14 +84,14 @@ def recipe(recipe_id):
 @app.route("/recipes/<int:recipe_id>/edit", methods=["POST", "GET"])
 def recipe_edit(recipe_id):
     cur = get_db().cursor()
-    cur.execute("SELECT * FROM recipes WHERE recipe_id = ?", (recipe_id,))
+    cur.execute("SELECT * FROM recipes WHERE recipe_id = ? AND deleted=0", (recipe_id,))
     rows = cur.fetchall()
     if request.method == "POST":
         print(request.form["name"])
         conn = get_db()
         cur = conn.cursor()
         cur.execute(
-            "UPDATE recipes SET recipe_name = ?, cuisine = ?, serving_size = ?, prep_time = ?, cook_time = ?, total_time = ?, instructions = ?, additional_notes = ? WHERE recipe_id = ?",
+            "UPDATE recipes SET recipe_name = ?, cuisine = ?, serving_size = ?, prep_time = ?, cook_time = ?, total_time = ?, instructions = ?, additional_notes = ? WHERE recipe_id = ? AND deleted=0",
             (
                 request.form["name"],
                 request.form["cuisine"],
@@ -106,6 +107,15 @@ def recipe_edit(recipe_id):
         conn.commit()
         return redirect("/recipes/" + str(recipe_id))
     return render_template("edit_recipe.html", rows=rows)
+
+
+@app.route("/recipes/<int:recipe_id>/delete")
+def recipe_delete(recipe_id):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("UPDATE recipes SET deleted=TRUE WHERE recipe_id = ?", (recipe_id,))
+    conn.commit()
+    return redirect("/recipes/")
 
 
 # def get_records():

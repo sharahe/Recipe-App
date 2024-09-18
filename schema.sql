@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS recipes (
     total_time INTEGER,
     instructions TEXT,
     additional_notes TEXT,
-    img_str_file TEXT
+    img_str_file TEXT,
+    deleted BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS recipe_to_ingredients (
