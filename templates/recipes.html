@@ -12,6 +12,12 @@
   <div class="gallery-row">
     {% for row in rows %}
     <div class="recipe">
+      <img
+        src="/uploads/{{row['img_str_file']}}"
+        alt="recipe-image"
+        width="100%"
+        height="auto"
+      />
       <a href="/recipes/{{row[0]}}"> <div class="recipe">{{row[1]}}</div></a>
     </div>
     {% endfor %}

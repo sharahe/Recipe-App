@@ -1,9 +1,17 @@
 import sqlite3
+import os
 from flask import g
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, flash, send_from_directory
 from flask import render_template
+from werkzeug.utils import secure_filename
+
+
+UPLOAD_FOLDER = "uploads"
+ALLOWED_EXTENSIONS = {"txt", "pdf", "png", "jpg", "jpeg", "gif"}
 
 app = Flask(__name__)
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 
 @app.route("/")
@@ -45,15 +53,31 @@ def recipes():
     return render_template("recipes.html", rows=rows)
 
 
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 @app.route("/recipes/add/", methods=["POST", "GET"])
 def recipes_add():
     if request.method == "POST":
+        filename = ""
+        if "add-image" not in request.files:
+            flash("No file part")
+            return redirect(request.url)
+        file = request.files["add-image"]
+        if file.filename == "":
+            flash("No selected file")
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+
         print(request.form["name"])
 
         conn = get_db()
         cur = conn.cursor()
         cur.execute(
-            "INSERT INTO recipes ( recipe_name, cuisine, serving_size, prep_time, cook_time, total_time, instructions, additional_notes) values (?,?,?,?,?,?,?,?)",
+            "INSERT INTO recipes ( recipe_name, cuisine, serving_size, prep_time, cook_time, total_time, instructions, additional_notes, img_str_file) values (?,?,?,?,?,?,?,?,?)",
             (
                 # request.form["recipe_id"], # autoincrements on its own?
                 request.form["name"],
@@ -64,12 +88,19 @@ def recipes_add():
                 float(request.form["prep-time"]) + float(request.form["cook-time"]),
                 request.form["instructions"],
                 request.form["notes"],
-                # request.form["img_str_file"],
+                filename,
             ),
         )
         conn.commit()
+        print(file)
+
         return redirect("/recipes/" + str(cur.lastrowid))
     return render_template("add_recipe.html")
+
+
+@app.route("/uploads/<name>")
+def download_file(name):
+    return send_from_directory(app.config["UPLOAD_FOLDER"], name)
 
 
 @app.route("/recipes/<int:recipe_id>")

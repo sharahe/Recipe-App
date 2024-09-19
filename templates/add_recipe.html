@@ -1,14 +1,18 @@
 {% extends "base.html" %} {% block body %}
-<form method="POST">
+<form method="POST" enctype=multipart/form-data>
   <div class="recipe-details">
-    <button type="submit">+ Add Image</button>
+   
+    <div class="recipe-input-image">
+      <div>Add Image</div>
+      <input type=file name="add-image"/>
+    </div>
     <div class="recipe-input">
       <div>Recipe Name</div>
       <input type="text" class="recipe-name" name="name" />
     </div>
     <div class="recipe-input">
       <div>Cuisine</div>
-      <!-- <input type="option" id="recipe-cuisine" /> -->
+
       <input list="recipe-cuisine" name="cuisine" />
       <datalist class="recipe-cuisine">
         <option value="American"></option>
