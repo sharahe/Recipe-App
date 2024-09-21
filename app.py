@@ -4,6 +4,7 @@ from flask import g
 from flask import Flask, request, redirect, flash, send_from_directory
 from flask import render_template
 from werkzeug.utils import secure_filename
+import datetime
 
 
 UPLOAD_FOLDER = "uploads"
@@ -118,23 +119,49 @@ def recipe_edit(recipe_id):
     cur.execute("SELECT * FROM recipes WHERE recipe_id = ? AND deleted=0", (recipe_id,))
     rows = cur.fetchall()
     if request.method == "POST":
+        filename = ""
+        # rows[0]["img_str_file"]
+
+        file = request.files["add-image"]
+
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+
         print(request.form["name"])
         conn = get_db()
         cur = conn.cursor()
-        cur.execute(
-            "UPDATE recipes SET recipe_name = ?, cuisine = ?, serving_size = ?, prep_time = ?, cook_time = ?, total_time = ?, instructions = ?, additional_notes = ? WHERE recipe_id = ? AND deleted=0",
-            (
-                request.form["name"],
-                request.form["cuisine"],
-                request.form["serving-size"],
-                request.form["prep-time"],
-                request.form["cook-time"],
-                float(request.form["prep-time"]) + float(request.form["cook-time"]),
-                request.form["instructions"],
-                request.form["notes"],
-                recipe_id,
-            ),
-        )
+        if filename == "":
+            cur.execute(
+                "UPDATE recipes SET recipe_name = ?, cuisine = ?, serving_size = ?, prep_time = ?, cook_time = ?, total_time = ?, instructions = ?, additional_notes = ? WHERE recipe_id = ? AND deleted=0",
+                (
+                    request.form["name"],
+                    request.form["cuisine"],
+                    request.form["serving-size"],
+                    request.form["prep-time"],
+                    request.form["cook-time"],
+                    float(request.form["prep-time"]) + float(request.form["cook-time"]),
+                    request.form["instructions"],
+                    request.form["notes"],
+                    recipe_id,
+                ),
+            )
+        else:
+            cur.execute(
+                "UPDATE recipes SET recipe_name = ?, cuisine = ?, serving_size = ?, prep_time = ?, cook_time = ?, total_time = ?, instructions = ?, additional_notes = ?, img_str_file= ? WHERE recipe_id = ? AND deleted=0",
+                (
+                    request.form["name"],
+                    request.form["cuisine"],
+                    request.form["serving-size"],
+                    request.form["prep-time"],
+                    request.form["cook-time"],
+                    float(request.form["prep-time"]) + float(request.form["cook-time"]),
+                    request.form["instructions"],
+                    request.form["notes"],
+                    filename,
+                    recipe_id,
+                ),
+            )
         conn.commit()
         return redirect("/recipes/" + str(recipe_id))
     return render_template("edit_recipe.html", rows=rows)
@@ -178,3 +205,36 @@ def init_db():
         with app.open_resource("schema.sql", mode="r") as f:
             db.cursor().executescript(f.read())
         db.commit()
+
+
+migrations = [
+    "CREATE TABLE IF NOT EXISTS locations (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT,room TEXT);",
+    "CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY AUTOINCREMENT,location_id INTEGER,name TEXT,category TEXT,quantity FLOAT,notes TEXT);",
+    "CREATE TABLE IF NOT EXISTS recipes (recipe_id INTEGER PRIMARY KEY AUTOINCREMENT,recipe_name TEXT,cuisine TEXT,serving_size INTEGER,prep_time INTEGER,cook_time INTEGER,total_time INTEGER,instructions TEXT,additional_notes TEXT,img_str_file TEXT,deleted BOOLEAN DEFAULT FALSE);",
+    "CREATE TABLE IF NOT EXISTS recipe_to_ingredients (recipe_id INTEGER,ingredient_id INTEGER,quantity FLOAT,unit TEXT);",
+    "CREATE TABLE IF NOT EXISTS ingredients (ingredient_id INTEGER,ingredient_name TEXT,ingredient_category TEXT);",
+    """CREATE VIRTUAL TABLE recipe_search USING FTS5(recipe_name, instructions, additional_notes, cuisine);""",
+]
+
+with app.app_context():
+    print("initializing")
+    db = get_db()
+    cur = db.cursor()
+    cur.execute(
+        "CREATE TABLE IF NOT EXISTS migration_log (id INTEGER PRIMARY KEY, version INTEGER, created_at TEXT )"
+    )
+    cur.execute("SELECT MAX(version) as v from migration_log")
+    rows = cur.fetchall()
+
+    max_version = rows[0]["v"]
+    if max_version < len(migrations):
+        for i, x in enumerate(migrations[max_version:]):
+            cur.execute(x)
+            print("Running Migration ", x)
+            n = datetime.datetime.now(datetime.timezone.utc)
+
+            cur.execute(
+                "INSERT INTO migration_log (version,created_at) values (?,?)",
+                (i + max_version + 1, n.isoformat()),
+            )
+            db.commit()

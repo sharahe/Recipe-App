@@ -1,7 +1,11 @@
 {% extends "base.html" %} {% block body %}
-<form method="POST">
+<form method="POST"  enctype=multipart/form-data>
   <div class="recipe-details">
-    <button type="submit">+ Add Image</button>
+    <div class="recipe-input-image">
+      <div>Add Image</div>
+      <input type="file" name="add-image" />
+    </div>
+
     <div class="recipe-input">
       <div>Recipe Name</div>
       <input
