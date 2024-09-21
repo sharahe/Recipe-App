@@ -1,31 +1,41 @@
 {% extends "base.html" %} {% block body %}
 
-<div id="what-to-eat">
-  <div>Are you hungryyy?</div>
-  <div id="im-hungry">Well, I'm hungry</div>
-  <div class="button">Surprise Recipe Here</div>
-</div>
 <div id="input-wrapper">
-  <input type="text" id="search-bar" />
+  <div class="search-bar-wrapper">
+    <span class="material-symbols-outlined"> search </span>
+    <input
+      placeholder="What do you want to cook today?"
+      type="text"
+      id="search-bar"
+    />
+  </div>
 </div>
 <div id="gallery">
   <div class="gallery-row">
     {% for row in rows %}
     <div class="recipe">
-      <img
-        src="/uploads/{{row['img_str_file']}}"
-        alt="recipe-image"
-        width="100%"
-        height="auto"
-      />
-      <a href="/recipes/{{row[0]}}"> <div class="recipe">{{row[1]}}</div></a>
+      <a class="card_recipe_link" href="/recipes/{{row[0]}}">
+        <div class="inner_card">
+          <div class="card_img">
+            <img
+              src="/uploads/{{row['img_str_file']}}"
+              alt="recipe-image"
+              width="100%"
+              height="auto"
+            />
+          </div>
+          <div class="card_recipe_text">
+            <div class="card_recipe_name">{{row[1]}}</div>
+            <div class="card_recipe_time">
+              <span class="material-symbols-outlined"> timer </span>
+              <div class="card_total_time">{{row["total_time"]}} min</div>
+            </div>
+          </div>
+          <div class="card_cuisine">{{row["cuisine"]}}</div>
+        </div></a
+      >
     </div>
     {% endfor %}
   </div>
 </div>
 {% endblock %}
-
-<!-- TODO:
- - add image to cards
- - add title/recipe names to cards
- - add category tag to the cards -->
