@@ -1,0 +1,23 @@
+{% extends "base.html" %} {% block body %}
+<a href="/recipes/pantry/add">Add Ingredient</a>
+<a href="/recipes/suggest">Suggest Recipe</a>
+<table>
+  <tr>
+    <th>Ingredient</th>
+    <th>Category</th>
+    <th>Amount</th>
+    <th>Perishable?</th>
+    <th>Last Updated</th>
+  </tr>
+  {% for row in rows %}
+  <tr>
+    <td>{{row["name"]}}</td>
+    <td>{{row["category"]}}</td>
+    <td>{{row["quantity"]}} {{row["unit"]}}</td>
+    <td>{{row["perishable"]}}</td>
+    <td>{{row["last_updated"].split(" ")[0]}}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% endblock %}

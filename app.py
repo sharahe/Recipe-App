@@ -5,6 +5,9 @@ from flask import Flask, request, redirect, flash, send_from_directory
 from flask import render_template
 from werkzeug.utils import secure_filename
 import datetime
+from openai import OpenAI
+
+client = OpenAI()
 
 
 UPLOAD_FOLDER = "uploads"
@@ -176,6 +179,84 @@ def recipe_delete(recipe_id):
     return redirect("/recipes/")
 
 
+@app.route("/recipes/pantry/add", methods=["POST", "GET"])
+def ingred_add():
+    if request.method == "POST":
+
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute(
+            "INSERT INTO ingredients ( name, category, quantity, unit, perishable, last_updated) values (?,?,?,?,?,?)",
+            (
+                request.form["name"],
+                request.form["category"],
+                request.form["quantity"],
+                request.form["unit"],
+                request.form["perishable"],
+                datetime.datetime.now(datetime.timezone.utc),
+            ),
+        )
+        conn.commit()
+
+        return redirect("/recipes/pantry")
+    return render_template("add_ingredient.html")
+
+
+@app.route("/recipes/pantry")
+def ingred():
+    cur = get_db().cursor()
+    cur.execute("SELECT * FROM ingredients")
+    rows = cur.fetchall()
+    print(rows)
+    return render_template("ingredients.html", rows=rows)
+
+
+@app.route("/recipes/suggest")
+def suggest():
+    cur = get_db().cursor()
+    cur.execute("SELECT name FROM ingredients")
+    rows = cur.fetchall()
+    print(rows)
+    ingredient_str = ""
+
+    for i in rows:
+        ingredient_str = ingredient_str + "- " + i["name"] + "\n"
+
+    print(ingredient_str)
+    cur.execute("SELECT recipe_name FROM recipes")
+    rows = cur.fetchall()
+
+    recipe_str = ""
+
+    for i, x in enumerate(rows):
+        recipe_str = recipe_str + str(i + 1) + ". " + x["recipe_name"] + "\n"
+    print(recipe_str)
+
+    completion = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {
+                "role": "user",
+                "content": """Here are the names of the recipes I have to choose from: 
+{}
+
+I have the following ingredients: 
+{}
+
+Tell me which of the recipes I have provided is a good match for the ingredients I have.  There can be up to 3 matches, but don't include the recipe if we don't have most of the ingredients needed. Rank the recipes by how many of the ingredients are used. Reference the recipe by its number listed above. Do not list out the recipe steps, just the number""".format(
+                    recipe_str, ingredient_str
+                ),
+            },
+        ],
+    )
+
+    print(completion.choices[0].message)
+    return render_template(
+        "suggest.html", rows=rows, chat=completion.choices[0].message.content
+    )
+
+
 # def get_records():
 #     with conn:
 #         cur.execute("SELECT * FROM items")
@@ -214,7 +295,10 @@ migrations = [
     "CREATE TABLE IF NOT EXISTS recipe_to_ingredients (recipe_id INTEGER,ingredient_id INTEGER,quantity FLOAT,unit TEXT);",
     "CREATE TABLE IF NOT EXISTS ingredients (ingredient_id INTEGER,ingredient_name TEXT,ingredient_category TEXT);",
     """CREATE VIRTUAL TABLE recipe_search USING FTS5(recipe_name, instructions, additional_notes, cuisine);""",
+    "DROP TABLE ingredients;",
+    "CREATE TABLE IF NOT EXISTS ingredients (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT,category TEXT,quantity FLOAT,unit TEXT,perishable TEXT,last_updated TEXT);",
 ]
+
 
 with app.app_context():
     print("initializing")

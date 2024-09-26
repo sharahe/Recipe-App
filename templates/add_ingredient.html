@@ -1,0 +1,60 @@
+{% extends "base.html" %} {% block body %}
+<div class="add-recipe-page">
+
+
+  <div class="add-recipe-header">Add Ingredient</div>
+<form method="POST" enctype=multipart/form-data>
+  
+  <div class="recipe-details">
+   
+    
+    <div class="recipe-input">
+      <div>Ingredient Name</div>
+      <input type="text" class="recipe-name" name="name" />
+    </div>
+    <div class="recipe-input">
+      <div>Category</div>
+
+      <input list="recipe-cuisine" name="category" />
+      <datalist class="recipe-cuisine">
+        <option value="American"></option>
+        <option value="Chinese"></option>
+        <option value="Japanese"></option>
+        <option value="Italian"></option>
+        <option value="Mediterranean"></option>
+      </datalist>
+    </div>
+    
+    <div class="recipe-input">
+      <div>Quantity</div>
+      <input
+        type="number"
+        class="recipe-serving-size"
+        name="quantity"
+      />
+    </div>
+    <div class="recipe-input">
+      <div>Unit</div>
+      <input
+        type="text"
+        class="recipe-prep-time"
+        name="unit"
+      />
+      
+    </div>
+    <div class="recipe-input">
+      <div>Perishable</div>
+      <select name="perishable" id="perishable">
+        <option value="yes">Yes</option>
+        <option value="no">No</option>
+      </select>
+      
+    </div>
+    
+    <div class="recipe-input">
+    <button class="button" type="submit">Add Ingredient</button>
+  </div>
+  </div>
+</form>
+</div>
+{% endblock %}

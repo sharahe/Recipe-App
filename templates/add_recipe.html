@@ -1,5 +1,10 @@
 {% extends "base.html" %} {% block body %}
+<div class="add-recipe-page">
+
+
+  <div class="add-recipe-header">Add Recipe</div>
 <form method="POST" enctype=multipart/form-data>
+  
   <div class="recipe-details">
    
     <div class="recipe-input-image">
@@ -75,9 +80,12 @@
       <div>Additional Notes</div>
       <textarea class="form-id" rows="5" cols="70" name="notes"></textarea>
     </div>
+    <div class="recipe-input">
     <button class="button" type="submit">Save Recipe</button>
   </div>
+  </div>
 </form>
+</div>
 {% endblock %}
 
 <!-- TODO:

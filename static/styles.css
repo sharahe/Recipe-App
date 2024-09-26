@@ -13,7 +13,7 @@
   --secondary-brown: #c7ab8d; */
   /* green to coral */
   --primary-green: #688a50;
-  --secondary-green: #9cb17f;
+  --secondary-green: rgb(156, 177, 127);
   --neutral-white: #faf6eb;
   --primary-brown: #f9d2bf;
   --secondary-brown: #ed7d6c;
@@ -42,16 +42,9 @@ body {
 #nav a span {
   padding-right: 5px;
 }
-#what-to-eat {
-  background-color: var(--secondary-green);
-  padding: 15px;
-  color: var(--primary-brown);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+
 .button {
-  background-color: var(--primary-brown);
+  background-color: var(--secondary-brown);
   padding: 10px;
   color: var(--neutral-white);
   border-radius: 8px;
@@ -95,7 +88,7 @@ body {
 }
 .recipe {
   width: 100%;
-  background-color: var(--secondary-green);
+  background-color: rgba(239, 198, 127, 0.58);
   border-radius: 15px;
   display: flex;
   justify-content: center;
@@ -106,7 +99,7 @@ body {
 .gallery-row {
   display: grid;
   padding: 20px;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   row-gap: 20px;
   column-gap: 20px;
 }
@@ -122,9 +115,16 @@ body {
   height: 100vh;
   background-color: rgb(239, 239, 239);
 }
+.add-recipe-page {
+  background-color: rgba(239, 198, 127, 0.58);
+}
+.add-recipe-header {
+  font-size: 24px;
+  padding: 28px;
+}
 .recipe-details {
-  background-color: var(--secondary-green);
   padding: 20px;
+  border-radius: 15px;
 }
 .recipe-body {
   display: flex;
@@ -136,10 +136,20 @@ body {
 .recipe-input {
   padding: 10px;
 }
+.recipe-input-image {
+  padding: 10px;
+}
 
 div.recipe-input input {
   border-radius: 8px;
   border: 1px solid gray;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+  /* width: 250; */
+}
+div.recipe-input textarea {
+  border-radius: 8px;
+  border: 1px solid gray;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
 }
 div.recipe-input div {
   height: 20px;
@@ -160,6 +170,13 @@ div.recipe-input div {
 img {
   border-radius: 10px;
 }
+
+/* .add-recipe-header {
+  background-color: var(--primary-green);
+  font-size: 24px;
+  padding: 20px;
+  border-radius: 15px;
+} */
 .recipe-body h1 {
   display: flex;
   justify-content: center;
@@ -183,8 +200,7 @@ img {
 .recipe-serving-size {
   display: grid;
   grid: auto;
-  background-color: var(--secondary-green);
-  padding: 10px;
+  /* padding: 10px; */
 }
 .recipe-serving-header {
   background-color: var(--primary-green);
