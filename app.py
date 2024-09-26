@@ -311,6 +311,8 @@ with app.app_context():
     rows = cur.fetchall()
 
     max_version = rows[0]["v"]
+    if max_version is None:
+        max_version = 0
     if max_version < len(migrations):
         for i, x in enumerate(migrations[max_version:]):
             cur.execute(x)
