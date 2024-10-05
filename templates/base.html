@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Recipes</title>
+    <title>{% block title %} Recipes {% endblock %}</title>
 
     {% with messages = get_flashed_messages() %} {% if messages %}
     <ul class="flashes">
@@ -11,6 +11,18 @@
     </ul>
     {% endif %} {% endwith %}
     <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="stylesheet" href="/static/input.css" />
+    <link rel="stylesheet" href="/static/recipe-card.css" />
+    <link rel="stylesheet" href="/static/add_ingredient.css" />
+    <link rel="stylesheet" href="/static/add_recipe.css" />
+    <link rel="stylesheet" href="/static/base.css" />
+    <link rel="stylesheet" href="/static/edit_recipe.css" />
+    <link rel="stylesheet" href="/static/ingredients.css" />
+    <link rel="stylesheet" href="/static/recipe.css" />
+    <link rel="stylesheet" href="/static/recipes.css" />
+    <link rel="stylesheet" href="/static/search_recipe.css" />
+    <link rel="stylesheet" href="/static/suggest.css" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -35,12 +47,12 @@
       <a href="/recipes/pantry"
         ><span class="material-symbols-outlined"> kitchen </span>Pantry</a
       >
-      <a href="/favorites"
+      <a href="/recipes/favorites"
         ><span class="material-symbols-outlined"> favorite </span>Favorites</a
       >
-      <a href="/settings"
+      <!-- <a href="/settings"
         ><span class="material-symbols-outlined"> settings </span>Settings</a
-      >
+      > -->
     </div>
     <div class="content">{% block body %}{% endblock %}</div>
   </body>

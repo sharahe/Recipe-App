@@ -1,39 +1,58 @@
-{% extends "base.html" %} {% block body %}
+{% extends "base.html" %}{% block body %}
 
-<div id="input-wrapper">
+<div class="input-wrapper">
   <div class="search-bar-wrapper">
     <span class="material-symbols-outlined"> search </span>
-    <input
-      placeholder="What do you want to cook today?"
-      type="text"
-      id="search-bar"
-    />
+    <form action="/recipes/search">
+      <input
+        placeholder="What do you want to cook today?"
+        type="text"
+        class="search-bar"
+        name="keyword"
+      />
+    </form>
   </div>
 </div>
-<div id="gallery">
+<div class="gallery">
   <div class="gallery-row">
     {% for row in rows %}
     <div class="recipe">
-      <a class="card_recipe_link" href="/recipes/{{row[0]}}">
+      <div class="card_recipe_link">
         <div class="inner_card">
           <div class="card_img">
-            <img
-              src="/uploads/{{row['img_str_file']}}"
-              alt="recipe-image"
-              width="100%"
-              height="auto"
-            />
+            <a href="/recipes/{{row[0]}}"
+              ><img
+                src="/uploads/{{row['img_str_file']}}"
+                alt="recipe-image"
+                width="100%"
+                height="auto"
+              />
+            </a>
           </div>
-          <div class="card_recipe_text">
-            <div class="card_recipe_name">{{row[1]}}</div>
+          <div class="card_recipe_text align-center">
+            <a class="remove-link" href="/recipes/{{row[0]}}"
+              ><div class="card_recipe_name">{{row[1]}}</div></a
+            >
+            <a
+              class="remove-link"
+              href="/recipes/{{row['recipe_id']}}/favorite"
+            >
+              <span
+                class="material-symbols-outlined gray {{'filled' if row['favorite']==1 else '' }}"
+              >
+                favorite
+              </span>
+            </a>
+          </div>
+          <div class="card_cuisine row space-between align-center">
+            {{row["cuisine"]}}
             <div class="card_recipe_time">
-              <span class="material-symbols-outlined"> timer </span>
+              <span class="material-symbols-outlined icon-small"> timer </span>
               <div class="card_total_time">{{row["total_time"]}} min</div>
             </div>
           </div>
-          <div class="card_cuisine">{{row["cuisine"]}}</div>
-        </div></a
-      >
+        </div>
+      </div>
     </div>
     {% endfor %}
   </div>

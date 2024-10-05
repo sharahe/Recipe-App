@@ -1,86 +1,92 @@
-{% extends "base.html" %} {% block body %}
-<div class="add-recipe-page">
 
+{% extends "base.html" %}
+{% block title %} Add Recipe
+{% endblock %}
+{% block body %}
+
+<div class="add-recipe-page">
 
   <div class="add-recipe-header">Add Recipe</div>
 <form method="POST" enctype=multipart/form-data>
   
   <div class="recipe-details">
    
-    <div class="recipe-input-image">
-      <div>Add Image</div>
+    <div class="input-container">
+      <label>Add Image</label>
       <input type=file name="add-image"/>
     </div>
-    <div class="recipe-input">
-      <div>Recipe Name</div>
-      <input type="text" class="recipe-name" name="name" />
+    <div class="input-container">
+      <label>Recipe Name</label>
+      <input type="text"  name="name" />
     </div>
-    <div class="recipe-input">
-      <div>Cuisine</div>
-
-      <input list="recipe-cuisine" name="cuisine" />
-      <datalist class="recipe-cuisine">
-        <option value="American"></option>
-        <option value="Chinese"></option>
-        <option value="Japanese"></option>
-        <option value="Italian"></option>
-        <option value="Mediterranean"></option>
-      </datalist>
+    <div class="input-container">
+      <label>Cuisine</label>
+      <select  name="cuisine" >
+        <option value="American">American</option>
+        <option value="Chinese">Chinese</option>
+        <option value="Japanese">Japanese</option>
+        <option value="Italian">Italian</option>
+        <option value="Mediterranean">Mediterranean</option>
+      </select>
     </div>
-    <div class="recipe-input">
-      <div>Link to Recipe</div>
-      <input type="text" , class="recipe-url" name="recipe-url" />
+    <div class="input-container">
+      <label>Link to Recipe</label>
+      <input type="text"  name="recipe-url" />
     </div>
-    <div class="recipe-input">
-      <div>Serving Size</div>
+    <div class="input-container">
+      <label>Serving Size</label>
       <input
         type="number"
-        class="recipe-serving-size"
+        class="input-small"
         name="serving-size"
         min="1"
         max="20"
       />
     </div>
-    <div class="recipe-input">
-      <div>Prep Time</div>
+    <div class="input-container">
+      <label>Prep Time</label>
+      <div class="row vertical-center">
       <input
         type="number"
-        class="recipe-prep-time"
+        class="input-small"
         name="prep-time"
         min="0"
         max="10000"
       />
-      min
+      <div class="padding-left-1">min</div>
     </div>
-    <div class="recipe-input">
-      <div>Cook Time</div>
+    </div>
+    <div class="input-container">
+      <label>Cook Time</label>
+      <div class="row vertical-center">
       <input
         type="number"
-        class="recipe-cook-time"
+     class="input-small"
         name="cook-time"
         min="0"
         max="10000"
       />
-      min
+      <div class="padding-left-1">min</div>
+      
     </div>
-    <div class="recipe-input">
-      <div>Ingredients</div>
-      <input type="text" class="recipe-ingredients" name="ingredients" />
     </div>
-    <div class="recipe-input">
-      <div>Instructions</div>
+    <div class="input-container">
+      <label>Ingredients</label>
+      <input type="text"  name="ingredients" />
+    </div>
+    <div class="input-container">
+      <label>Instructions</label>
       <textarea
-        class="form-id"
         rows="10"
         cols="70"
         name="instructions"
       ></textarea>
     </div>
-    <div class="recipe-input">
-      <div>Additional Notes</div>
-      <textarea class="form-id" rows="5" cols="70" name="notes"></textarea>
+    <div class="input-container">
+      <label>Additional Notes</label>
+      <textarea  rows="5" cols="70" name="notes"></textarea>
     </div>
-    <div class="recipe-input">
+    <div class="input-container">
     <button class="button" type="submit">Save Recipe</button>
   </div>
   </div>

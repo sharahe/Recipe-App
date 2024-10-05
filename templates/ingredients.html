@@ -1,23 +1,35 @@
-{% extends "base.html" %} {% block body %}
-<a href="/recipes/pantry/add">Add Ingredient</a>
-<a href="/recipes/suggest">Suggest Recipe</a>
-<table>
-  <tr>
-    <th>Ingredient</th>
-    <th>Category</th>
-    <th>Amount</th>
-    <th>Perishable?</th>
-    <th>Last Updated</th>
-  </tr>
-  {% for row in rows %}
-  <tr>
-    <td>{{row["name"]}}</td>
-    <td>{{row["category"]}}</td>
-    <td>{{row["quantity"]}} {{row["unit"]}}</td>
-    <td>{{row["perishable"]}}</td>
-    <td>{{row["last_updated"].split(" ")[0]}}</td>
-  </tr>
-  {% endfor %}
-</table>
+{% extends "base.html" %} {% block title %} Pantry {% endblock %} {% block body
+%}
+<div class="column align-center">
+  <div class="table-container column">
+    <div class="row space-between align-center vertical-padding-1">
+      <div class="margin-left-2 bold">Ingredients</div>
+      <div class="row">
+        <a href="/recipes/pantry/add" class="button">Add Ingredient</a>
+        <a href="/recipes/suggest" class="button margin-left-1 margin-right-1"
+          >Suggest Recipe</a
+        >
+      </div>
+    </div>
+    <table>
+      <tr>
+        <th>Ingredient</th>
+        <th>Category</th>
+        <th>Amount</th>
+        <th>Perishable?</th>
+        <th>Last Updated</th>
+      </tr>
+      {% for row in rows %}
+      <tr>
+        <td>{{row["name"]}}</td>
+        <td>{{row["category"]}}</td>
+        <td>{{row["quantity"]}} {{row["unit"]}}</td>
+        <td>{{row["perishable"]}}</td>
+        <td>{{row["last_updated"].split(" ")[0]}}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
 
 {% endblock %}

@@ -1,59 +1,97 @@
-{% extends "base.html" %} {% block body %}
+{% extends "base.html" %} {% block title %} {{ rows[0]["recipe_name"] }} {%
+endblock %} {% block body %}
 
 <div class="recipe-body">
-  <div id="recipe-header">
+  <div class="recipe-header column align-center">
     <h1>
-      {{ rows[0]["recipe_name"] }}
-      <a href="/recipes/{{rows[0]['recipe_id']}}/edit">Edit</a>
-      <a href="/recipes/{{rows[0]['recipe_id']}}/delete">Delete</a>
+      <a class="black" href="/recipes/{{rows[0]['recipe_id']}}/edit"
+        >{{ rows[0]["recipe_name"] }}</a
+      >
+      <a
+        class="remove-link margin-left-2"
+        href="/recipes/{{rows[0]['recipe_id']}}/favorite"
+      >
+        <span
+          class="material-symbols-outlined {{'filled' if rows[0]['favorite']==1 else '' }}"
+        >
+          favorite
+        </span>
+      </a>
     </h1>
-    <div class="recipe-image">
+
+    <div class="recipe-image light-green-bg fit-content border-radius">
       <img
         src="/uploads/{{rows[0]['img_str_file']}}"
         alt="recipe-image"
         width="500"
         height="auto"
       />
-      <div>
-        <div class="tag">{{ rows[0]["cuisine"] }}</div>
-      </div>
-    </div>
-    <div class="recipe-meas-table">
-      <div class="recipe-serving-size">
-        <div>
-          <div class="recipe-serving-header">Serving Size</div>
-          <div class="recipe-serving-value">{{rows[0]["serving_size"]}}</div>
-        </div>
-      </div>
-      <div class="recipe-time-table">
-        <div>
-          <div class="recipe-time-header">Prep Time</div>
-          <div class="recipe-time-value">{{rows[0]["prep_time"]}} min</div>
-        </div>
-        <div>
-          <div class="recipe-time-header">Cook Time</div>
-          <div class="recipe-time-value">{{rows[0]["cook_time"]}} min</div>
-        </div>
-        <div>
-          <div class="recipe-time-header">Total Time</div>
-          <div class="recipe-time-value">{{rows[0]["total_time"]}} min</div>
+      <div class="recipe-stats vertical-padding-1">
+        <div class="row space-between">
+          <div class="row align-center">
+            <div>
+              <span class="material-symbols-outlined"> globe </span>
+            </div>
+            <div class="margin-left-1">
+              <div class="font-small">Cuisine</div>
+              <div class="light-bold">{{ rows[0]["cuisine"] }}</div>
+            </div>
+          </div>
+          <div class="row align-center">
+            <div>
+              <span class="material-symbols-outlined"> pie_chart </span>
+            </div>
+            <div class="margin-left-1">
+              <div class="font-small">Servings</div>
+              <div class="light-bold">{{rows[0]["serving_size"]}}</div>
+            </div>
+          </div>
+          <div class="row align-center">
+            <div>
+              <span class="material-symbols-outlined"> restaurant </span>
+            </div>
+            <div class="margin-left-1">
+              <div class="font-small">Prep</div>
+              <div class="light-bold">{{rows[0]["prep_time"]}} min</div>
+            </div>
+          </div>
+          <div class="row align-center">
+            <div>
+              <span class="material-symbols-outlined"> skillet </span>
+            </div>
+            <div class="margin-left-1">
+              <div class="font-small">Cook</div>
+              <div class="light-bold">{{rows[0]["cook_time"]}} min</div>
+            </div>
+          </div>
+          <div class="row align-center">
+            <div><span class="material-symbols-outlined"> timer </span></div>
+            <div class="margin-left-1 margin-right-1">
+              <div class="font-small">Total</div>
+              <div class="light-bold">{{rows[0]["total_time"]}} min</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="ingredients-list">
+    <div class="w-500">
       <h2>Ingredients</h2>
       <p>[to add later: currently hardcode]</p>
     </div>
-    <div class="instructions">
+
+    <div class="w-500">
       <h2>Instructions</h2>
       <pre>{{rows[0]["instructions"]}}</pre>
     </div>
-    <div class="additional-notes">
-      <h2>Additional Notes</h2>
-      <p>{{rows[0]["additional_notes"]}}</p>
-    </div>
-  </div>
-</div>
+    {% if rows[0]["additional_notes"]|length > 0 %}
 
-{% endblock %}
+    <div class="w-500">
+      <h2>Additional Notes</h2>
+      <pre>{{rows[0]["additional_notes"]}}</pre>
+    </div>
+    {% endif %}
+  </div>
+
+  {% endblock %}
+</div>

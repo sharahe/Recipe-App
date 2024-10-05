@@ -1,4 +1,7 @@
-{% extends "base.html" %} {% block body %}
+{% extends "base.html" %}
+{% block title %} Add Ingredient
+{% endblock %}
+{% block body %}
 <div class="add-recipe-page">
 
 
@@ -6,52 +9,49 @@
 <form method="POST" enctype=multipart/form-data>
   
   <div class="recipe-details">
-   
-    
-    <div class="recipe-input">
-      <div>Ingredient Name</div>
-      <input type="text" class="recipe-name" name="name" />
+    <div class="input-container">
+      <label>Ingredient Name</label>
+      <input type="text"  name="name" />
     </div>
-    <div class="recipe-input">
-      <div>Category</div>
+    <div class="input-container">
+      <label>Category</label>
 
-      <input list="recipe-cuisine" name="category" />
-      <datalist class="recipe-cuisine">
-        <option value="American"></option>
-        <option value="Chinese"></option>
-        <option value="Japanese"></option>
-        <option value="Italian"></option>
-        <option value="Mediterranean"></option>
-      </datalist>
+      <select  name="category" >
+        <option value="American">American</option>
+        <option value="Chinese">Chinese</option>
+        <option value="Japanese">Japanese</option>
+        <option value="Italian">Italian</option>
+        <option value="Mediterranean">Mediterranean</option>
+      </select>
     </div>
     
-    <div class="recipe-input">
-      <div>Quantity</div>
+    <div class="input-container">
+      <label>Quantity</label>
       <input
         type="number"
-        class="recipe-serving-size"
+       
         name="quantity"
       />
     </div>
-    <div class="recipe-input">
-      <div>Unit</div>
+    <div class="input-container">
+      <label>Unit</label>
       <input
         type="text"
-        class="recipe-prep-time"
+        
         name="unit"
       />
       
     </div>
-    <div class="recipe-input">
-      <div>Perishable</div>
-      <select name="perishable" id="perishable">
+    <div class="input-container">
+      <label>Perishable</label>
+      <select name="perishable" >
         <option value="yes">Yes</option>
         <option value="no">No</option>
       </select>
       
     </div>
     
-    <div class="recipe-input">
+    <div class="input-container">
     <button class="button" type="submit">Add Ingredient</button>
   </div>
   </div>

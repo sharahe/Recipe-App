@@ -81,7 +81,16 @@ def recipes_add():
         conn = get_db()
         cur = conn.cursor()
         cur.execute(
-            "INSERT INTO recipes ( recipe_name, cuisine, serving_size, prep_time, cook_time, total_time, instructions, additional_notes, img_str_file) values (?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO recipe_search ( recipe_name, cuisine, instructions, additional_notes) values (?,?,?,?)",
+            (
+                request.form["name"],
+                request.form["cuisine"],
+                request.form["instructions"],
+                request.form["notes"],
+            ),
+        )
+        cur.execute(
+            "INSERT INTO recipes ( recipe_name, cuisine, serving_size, prep_time, cook_time, total_time, instructions, additional_notes, img_str_file, recipe_search_id) values (?,?,?,?,?,?,?,?,?,?)",
             (
                 # request.form["recipe_id"], # autoincrements on its own?
                 request.form["name"],
@@ -93,6 +102,7 @@ def recipes_add():
                 request.form["instructions"],
                 request.form["notes"],
                 filename,
+                cur.lastrowid,
             ),
         )
         conn.commit()
@@ -134,7 +144,22 @@ def recipe_edit(recipe_id):
         print(request.form["name"])
         conn = get_db()
         cur = conn.cursor()
+        cur.execute(
+            "SELECT recipe_search_id from recipes where recipe_id = ?", (recipe_id,)
+        )
+        row = cur.fetchone()
+        cur.execute(
+            "UPDATE recipe_search SET recipe_name = ?, cuisine = ?, instructions = ?, additional_notes = ? WHERE rowid = ?",
+            (
+                request.form["name"],
+                request.form["cuisine"],
+                request.form["instructions"],
+                request.form["notes"],
+                row[0],
+            ),
+        )
         if filename == "":
+
             cur.execute(
                 "UPDATE recipes SET recipe_name = ?, cuisine = ?, serving_size = ?, prep_time = ?, cook_time = ?, total_time = ?, instructions = ?, additional_notes = ? WHERE recipe_id = ? AND deleted=0",
                 (
@@ -174,6 +199,11 @@ def recipe_edit(recipe_id):
 def recipe_delete(recipe_id):
     conn = get_db()
     cur = conn.cursor()
+    cur.execute(
+        "SELECT recipe_search_id from recipes where recipe_id = ?", (recipe_id,)
+    )
+    row = cur.fetchone()
+    cur.execute("DELETE FROM recipe_search where rowid = ?", (row[0],))
     cur.execute("UPDATE recipes SET deleted=TRUE WHERE recipe_id = ?", (recipe_id,))
     conn.commit()
     return redirect("/recipes/")
@@ -257,6 +287,80 @@ Tell me which of the recipes I have provided is a good match for the ingredients
     )
 
 
+@app.route("/recipes/search")
+def search_recipe():
+    keyword = request.args.get("keyword")
+    print(keyword)
+    cur = get_db().cursor()
+
+    cur.execute(
+        "SELECT rowid FROM recipe_search WHERE recipe_search MATCH ?", (keyword,)
+    )
+    rows = cur.fetchall()
+    rowids = []
+    for i in rows:
+        rowids.append(i[0])
+    cur.execute(
+        f"SELECT * FROM recipes WHERE recipe_search_id in ({','.join(['?']*len(rowids))})",
+        rowids,
+    )
+    rows = cur.fetchall()
+
+    print(rows)
+    return render_template("search_recipe.html", rows=rows, keyword=keyword)
+
+
+@app.route("/recipes/import_search")
+def import_recipe_search():
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM recipes WHERE recipe_search_id is NULL")
+    rows = cur.fetchall()
+    for i in rows:
+        cur.execute(
+            "INSERT INTO recipe_search ( recipe_name, cuisine, instructions, additional_notes) values (?,?,?,?)",
+            (
+                i["recipe_name"],
+                i["cuisine"],
+                i["instructions"],
+                i["additional_notes"],
+            ),
+        )
+
+        cur.execute(
+            "UPDATE recipes SET recipe_search_id = ? WHERE recipe_id = ?",
+            (cur.lastrowid, i["recipe_id"]),
+        )
+        conn.commit()
+    return redirect("/recipes")
+
+
+@app.route("/recipes/<int:recipe_id>/favorite")
+def favorite_recipe(recipe_id):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT favorite from recipes where recipe_id = ?", (recipe_id,))
+    fave = cur.fetchone()
+    print(recipe_id, fave["favorite"])
+
+    cur.execute(
+        "UPDATE recipes SET favorite = ? WHERE recipe_id = ?",
+        ((fave["favorite"] + 1) % 2, recipe_id),
+    )
+    conn.commit()
+
+    return redirect(request.referrer)
+
+
+@app.route("/recipes/favorites")
+def favorites():
+    cur = get_db().cursor()
+    cur.execute("SELECT * FROM recipes WHERE deleted=0 and favorite=1")
+    rows = cur.fetchall()
+    print(rows)
+    return render_template("recipes.html", rows=rows)
+
+
 # def get_records():
 #     with conn:
 #         cur.execute("SELECT * FROM items")
@@ -297,6 +401,8 @@ migrations = [
     """CREATE VIRTUAL TABLE recipe_search USING FTS5(recipe_name, instructions, additional_notes, cuisine);""",
     "DROP TABLE ingredients;",
     "CREATE TABLE IF NOT EXISTS ingredients (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT,category TEXT,quantity FLOAT,unit TEXT,perishable TEXT,last_updated TEXT);",
+    "ALTER TABLE recipes ADD COLUMN recipe_search_id INTEGER",
+    "ALTER TABLE recipes ADD COLUMN favorite BOOLEAN DEFAULT FALSE",
 ]
 
 

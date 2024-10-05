@@ -1,94 +1,102 @@
-{% extends "base.html" %} {% block body %}
+{% extends "base.html" %}
+{% block title %} Edit Recipe
+{% endblock %}
+{% block body %}
+<div class="add-recipe-page">
+  <div class="add-recipe-header">Edit Recipe</div>
+
 <form method="POST"  enctype=multipart/form-data>
+
   <div class="recipe-details">
-    <div class="recipe-input-image">
-      <div>Add Image</div>
+    <div class="input-container">
+      <label>Add Image</label>
       <input type="file" name="add-image" />
     </div>
 
-    <div class="recipe-input">
-      <div>Recipe Name</div>
+    <div class="input-container">
+      <label>Recipe Name</label>
       <input
         type="text"
         value="{{ rows[0]['recipe_name']}}"
-        class="recipe-name"
         name="name"
       />
     </div>
-    <div class="recipe-input">
-      <div>Cuisine</div>
-      <!-- <input type="option" id="recipe-cuisine" /> -->
-      <input
-        value="{{ rows[0]['cuisine']}}"
-        list="recipe-cuisine"
-        name="cuisine"
-      />
-      <datalist class="recipe-cuisine">
-        <option value="American"></option>
-        <option value="Chinese"></option>
-        <option value="Japanese"></option>
-        <option value="Italian"></option>
-        <option value="Mediterranean"></option>
-      </datalist>
+    <div class="input-container">
+      <label>Cuisine</label>      
+      <select  name="cuisine" >
+        <option {{"selected"  if rows[0]['cuisine'] == "American" else "" }} value="American">American</option>
+        <option {{"selected"  if rows[0]['cuisine'] == "Chinese" else "" }} value="Chinese">Chinese</option>
+        <option {{"selected"  if rows[0]['cuisine'] == "Japanese" else "" }} value="Japanese">Japanese</option>
+        <option {{"selected"  if rows[0]['cuisine'] == "Italian" else "" }} value="Italian">Italian</option>
+        <option {{"selected"  if rows[0]['cuisine'] == "Mediterranean" else "" }} value="Mediterranean">Mediterranean</option>
+      </select>
     </div>
-    <div class="recipe-input">
-      <div>Link to Recipe</div>
-      <input type="text" class="recipe-url" name="recipe-url" />
+    <div class="input-container">
+      <label>Link to Recipe</label>
+      <input type="text"  name="recipe-url" />
     </div>
-    <div class="recipe-input">
-      <div>Serving Size</div>
+    <div class="input-container">
+      <label>Serving Size</label>
       <input
         type="number"
         value="{{ rows[0]['serving_size']}}"
-        class="recipe-serving-size"
+        class="input-small"
         name="serving-size"
         min="1"
         max="20"
       />
     </div>
-    <div class="recipe-input">
-      <div>Prep Time</div>
+    <div class="input-container">
+      <label>Prep Time</label>
+      <div class="row vertical-center">
       <input
         type="number"
         value="{{ rows[0]['prep_time']}}"
-        class="recipe-prep-time"
+        class=" input-small"
         name="prep-time"
         min="0"
         max="10000"
       />
-      min
+      <div class="padding-left-1">min</div>
     </div>
-    <div class="recipe-input">
-      <div>Cook Time</div>
+    </div>
+    <div class="input-container">
+      <label>Cook Time</label>
+      <div class="row vertical-center">
       <input
         type="number"
         value="{{ rows[0]['cook_time']}}"
-        class="recipe-cook-time"
+        class="input-small"
         name="cook-time"
         min="0"
         max="10000"
       />
-      min
+      <div class="padding-left-1">min</div>
     </div>
-    <div class="recipe-input">
-      <div>Ingredients</div>
-      <input type="text" class="recipe-ingredients" name="ingredients" />
     </div>
-    <div class="recipe-input">
-      <div>Instructions</div>
-      <textarea class="form-id" rows="10" cols="70" name="instructions">
+    <div class="input-container">
+      <label>Ingredients</label>
+      <input type="text"  name="ingredients" />
+    </div>
+    <div class="input-container">
+      <label>Instructions</label>
+      <textarea class="form-id " rows="10" cols="70" name="instructions">
 {{ rows[0]['instructions']}}</textarea
       >
     </div>
-    <div class="recipe-input">
-      <div>Additional Notes</div>
+    <div class="input-container">
+      <label>Additional Notes</label>
       <textarea class="form-id" rows="5" cols="70" name="notes">
 {{ rows[0]['additional_notes']}}</textarea
       >
     </div>
+    <div class="row padding-left-2">
     <button class="button" type="submit">Save Recipe</button>
+    <a class="button margin-left-1" href="/recipes/{{rows[0]['recipe_id']}}/delete">Delete</a>
+  </div>
   </div>
 </form>
+</div>
 {% endblock %}
 
 <!-- TODO:
