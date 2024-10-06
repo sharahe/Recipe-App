@@ -1,0 +1,48 @@
+{% extends "base.html" %} {% block title %} Edit {{ row["name"] }} {% endblock
+%} {% block body %}
+<div class="add-recipe-page">
+  <div class="add-recipe-header">Edit Ingredient: {{ row["name"] }}</div>
+  <form method="POST" enctype="multipart/form-data">
+    <div class="recipe-details">
+      <div class="input-container">
+        <label>Ingredient Name</label>
+        <input type="text" name="name" value="{{ row['name']}}" />
+      </div>
+      <div class="input-container">
+        <label>Category</label>
+
+        <select name="category">
+          <option {{"selected"  if row['category'] == "Vegetable" else "" }} value="Vegetable">Vegetable</option>
+          <option {{"selected"  if row['category'] == "Fruit" else "" }} value="Fruit">Fruit</option>
+          <option {{"selected"  if row['category'] == "Protein" else "" }} value="Protein">Protein</option>
+          <option {{"selected"  if row['category'] == "Dairy" else "" }} value="Dairy">Dairy</option>
+          <option {{"selected"  if row['category'] == "Sauce" else "" }} value="Sauce">Sauce</option>
+          <option {{"selected"  if row['category'] == "Other" else "" }} value="Other">Other</option>
+        </select>
+       
+      </div>
+
+
+      <div class="input-container">
+        <label>Quantity</label>
+        <input type="number" name="quantity"value="{{ row['quantity']}}" />
+      </div>
+      <div class="input-container">
+        <label>Unit</label>
+        <input type="text" name="unit"value="{{ row['unit']}}" />
+      </div>
+      <div class="input-container">
+        <label>Perishable</label>
+        <select name="perishable">
+          <option {{"selected" if row['perishable'] == "yes" else ""}} value="yes">Yes</option>
+          <option {{"selected" if row['perishable'] == "no" else ""}}  value="no">No</option>
+        </select>
+      </div>
+
+      <div class="input-container">
+        <button class="button" type="submit">Save Changes</button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

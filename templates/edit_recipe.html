@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% block title %} Edit Recipe
+{% block title %} Edit {{rows[0]['recipe_name']}}
 {% endblock %}
 {% block body %}
 <div class="add-recipe-page">
-  <div class="add-recipe-header">Edit Recipe</div>
+  <div class="add-recipe-header">Edit Recipe: {{rows[0]['recipe_name']}}</div>
 
-<form method="POST"  enctype=multipart/form-data>
+<form method="POST"  enctype="multipart/form-data">
 
   <div class="recipe-details">
     <div class="input-container">
@@ -24,6 +24,7 @@
     <div class="input-container">
       <label>Cuisine</label>      
       <select  name="cuisine" >
+        
         <option {{"selected"  if rows[0]['cuisine'] == "American" else "" }} value="American">American</option>
         <option {{"selected"  if rows[0]['cuisine'] == "Chinese" else "" }} value="Chinese">Chinese</option>
         <option {{"selected"  if rows[0]['cuisine'] == "Japanese" else "" }} value="Japanese">Japanese</option>
@@ -74,9 +75,9 @@
       <div class="padding-left-1">min</div>
     </div>
     </div>
+    
     <div class="input-container">
-      <label>Ingredients</label>
-      <input type="text"  name="ingredients" />
+      <div id="ingredients"></div>
     </div>
     <div class="input-container">
       <label>Instructions</label>
@@ -91,12 +92,25 @@
       >
     </div>
     <div class="row padding-left-2">
-    <button class="button" type="submit">Save Recipe</button>
+    <button class="button" type="submit">Save Changes</button>
     <a class="button margin-left-1" href="/recipes/{{rows[0]['recipe_id']}}/delete">Delete</a>
   </div>
   </div>
 </form>
 </div>
+<script type="module">
+  import { render } from "https://esm.sh/preact";
+  import { App, html } from "/static/recipe-ingredients.js";
+  fetch("/recipes/{{rows[0]['recipe_id']}}/ingredients").then(r => r.json()).then(j => {
+    const ingredients = document.getElementById("ingredients");
+  render(
+    html`<${App} inputs=${j["ingredients"]} />`,
+    ingredients
+  );
+  })
+
+
+  </script>
 {% endblock %}
 
 <!-- TODO:

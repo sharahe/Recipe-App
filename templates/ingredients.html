@@ -14,19 +14,25 @@
     <table>
       <tr>
         <th>Ingredient</th>
-        <th>Category</th>
+        <th class="none">Category</th>
         <th>Amount</th>
-        <th>Perishable?</th>
-        <th>Last Updated</th>
+        <th class="none">Perishable?</th>
+        <th class="none">Last Updated</th>
       </tr>
       {% for row in rows %}
+
       <tr>
-        <td>{{row["name"]}}</td>
-        <td>{{row["category"]}}</td>
+        <td>
+          <a class="remove-link" href="/recipes/pantry/{{row['id']}}/edit"
+            >{{row["name"]}}</a
+          >
+        </td>
+        <td class="none">{{row["category"]}}</td>
         <td>{{row["quantity"]}} {{row["unit"]}}</td>
-        <td>{{row["perishable"]}}</td>
-        <td>{{row["last_updated"].split(" ")[0]}}</td>
+        <td class="none">{{row["perishable"]}}</td>
+        <td class="none">{{row["last_updated"].split(" ")[0]}}</td>
       </tr>
+
       {% endfor %}
     </table>
   </div>

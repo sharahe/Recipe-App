@@ -22,14 +22,12 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 def index():
     cur = get_db().cursor()
     cur.execute("SELECT * FROM items")
-    print(cur.fetchall())
     return "<p>Hello, World!!! Main Page</p>"
 
 
 @app.route("/index/", methods=["POST", "GET"])
 def hello_index():
     if request.method == "POST":
-        print(request.form["Name"])
         conn = get_db()
         cur = conn.cursor()
         cur.execute(
@@ -53,7 +51,6 @@ def recipes():
     cur = get_db().cursor()
     cur.execute("SELECT * FROM recipes WHERE deleted=0")
     rows = cur.fetchall()
-    print(rows)
     return render_template("recipes.html", rows=rows)
 
 
@@ -76,8 +73,6 @@ def recipes_add():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
 
-        print(request.form["name"])
-
         conn = get_db()
         cur = conn.cursor()
         cur.execute(
@@ -89,6 +84,7 @@ def recipes_add():
                 request.form["notes"],
             ),
         )
+
         cur.execute(
             "INSERT INTO recipes ( recipe_name, cuisine, serving_size, prep_time, cook_time, total_time, instructions, additional_notes, img_str_file, recipe_search_id) values (?,?,?,?,?,?,?,?,?,?)",
             (
@@ -105,10 +101,46 @@ def recipes_add():
                 cur.lastrowid,
             ),
         )
-        conn.commit()
-        print(file)
 
-        return redirect("/recipes/" + str(cur.lastrowid))
+        recipe_id = cur.lastrowid
+
+        # print("INGREDIENT_NUMBER", type(request.form["ingredient-number"]))
+        for i in range(int(request.form["ingredient-number"])):
+
+            # print("quantity", request.form["quantity-" + str(i)])
+            # print("unit", request.form["unit-" + str(i)])
+            # print("ingredients", request.form["ingredients-" + str(i)])
+            # for every ingredient, check if it exists in the ingredients table. otherwise add to ingredients
+            # add row to ingredients recipe table
+            cur.execute(
+                "SELECT id from ingredients WHERE name = ?",
+                (request.form["ingredients-" + str(i)],),
+            )
+
+            ingred_exist = cur.fetchone()
+            ingredient_id = None
+            if ingred_exist is None:
+                cur.execute(
+                    "INSERT INTO ingredients  (name) values (?) ",
+                    (request.form["ingredients-" + str(i)],),
+                )
+                ingredient_id = cur.lastrowid
+            else:
+                ingredient_id = ingred_exist[0]
+
+            cur.execute(
+                "INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id, quantity, unit) values (?, ?, ?, ?)",
+                (
+                    recipe_id,
+                    ingredient_id,
+                    request.form["quantity-" + str(i)],
+                    request.form["unit-" + str(i)],
+                ),
+            )
+
+        conn.commit()
+
+        return redirect("/recipes/" + str(recipe_id))
     return render_template("add_recipe.html")
 
 
@@ -122,16 +154,113 @@ def recipe(recipe_id):
     cur = get_db().cursor()
     cur.execute("SELECT * FROM recipes WHERE recipe_id = ? AND deleted=0", (recipe_id,))
     rows = cur.fetchall()
-    print(rows)
-    return render_template("recipe.html", rows=rows)
+
+    cur.execute(
+        "SELECT * FROM recipe_to_ingredients r INNER JOIN ingredients i ON r.recipe_id = ? AND r.ingredient_id = i.id",
+        (recipe_id,),
+    )
+    ingredients = cur.fetchall()
+    return render_template("recipe.html", rows=rows, ingredients=ingredients)
+
+
+@app.route("/recipes/<int:recipe_id>/ingredients")
+def recipe_ingredient_json(recipe_id):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT * FROM recipe_to_ingredients r INNER JOIN ingredients i ON r.recipe_id = ? AND r.ingredient_id = i.id",
+        (recipe_id,),
+    )
+    ingredients = cur.fetchall()
+
+    ingredients_ls = []
+    for i in ingredients:
+
+        ingredients_ls.append(
+            {"name": i["name"], "quantity": i["quantity"], "unit": i["unit"]}
+        )
+
+    return {"ingredients": ingredients_ls}
 
 
 @app.route("/recipes/<int:recipe_id>/edit", methods=["POST", "GET"])
 def recipe_edit(recipe_id):
-    cur = get_db().cursor()
+    conn = get_db()
+    cur = conn.cursor()
     cur.execute("SELECT * FROM recipes WHERE recipe_id = ? AND deleted=0", (recipe_id,))
     rows = cur.fetchall()
     if request.method == "POST":
+
+        print("INGREDIENT_NUMBER", type(request.form["ingredient-number"]))
+
+        cur.execute(
+            "SELECT * FROM recipe_to_ingredients r INNER JOIN ingredients i ON r.recipe_id = ? AND r.ingredient_id = i.id",
+            (recipe_id,),
+        )
+        ingredients = cur.fetchall()
+
+        for i in range(int(request.form["ingredient-number"])):
+
+            q = request.form["quantity-" + str(i)]
+            u = request.form["unit-" + str(i)]
+            n = request.form["ingredients-" + str(i)]
+            # if ingredient name dne in recipe to ingredients table, insert to table
+            exists_in_table = False
+            ingredient_id = 0
+            for j in ingredients:
+                if n == j["name"]:
+                    exists_in_table = True
+                    ingredient_id = j["id"]
+
+            if exists_in_table:
+
+                cur.execute(
+                    "UPDATE recipe_to_ingredients SET quantity = ?, unit = ? WHERE recipe_id = ? AND ingredient_id = ? ",
+                    (q, u, recipe_id, ingredient_id),
+                )
+                conn.commit()
+            else:
+                cur.execute(
+                    "INSERT INTO ingredients  (name) values (?) ",
+                    (request.form["ingredients-" + str(i)],),
+                )
+                ingredient_id = cur.lastrowid
+
+                cur.execute(
+                    "INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id, quantity, unit) values (?, ?, ?, ?)",
+                    (
+                        recipe_id,
+                        ingredient_id,
+                        q,
+                        u,
+                    ),
+                )
+                conn.commit()
+
+            # if ingred dne in ingredients table, insert to ingredients
+            # if ingredient name is in recipe to ingr table, update row
+        for j in ingredients:
+            exists_in_input = False
+            for i in range(int(request.form["ingredient-number"])):
+
+                q = request.form["quantity-" + str(i)]
+                u = request.form["unit-" + str(i)]
+                n = request.form["ingredients-" + str(i)]
+
+                if n == j["name"]:
+                    exists_in_input = True
+
+            if not exists_in_input:
+                print("DELETE", j["id"], recipe_id)
+                cur.execute(
+                    "DELETE FROM recipe_to_ingredients where ingredient_id = ? AND recipe_id = ?",
+                    (j["id"], recipe_id),
+                )
+                conn.commit()
+
+        # for ingred in recipe to ing:
+        # if ing dne in input_ing, del row in recip to ing
+
         filename = ""
         # rows[0]["img_str_file"]
 
@@ -141,7 +270,6 @@ def recipe_edit(recipe_id):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
 
-        print(request.form["name"])
         conn = get_db()
         cur = conn.cursor()
         cur.execute(
@@ -232,12 +360,38 @@ def ingred_add():
     return render_template("add_ingredient.html")
 
 
+@app.route("/recipes/pantry/<int:ingredient_id>/edit", methods=["POST", "GET"])
+def ingred_edit(ingredient_id):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM ingredients WHERE id = ?", (ingredient_id,))
+    rows = cur.fetchall()
+    if request.method == "POST":
+
+        cur.execute(
+            "UPDATE  ingredients SET  name=?, category =? , quantity=?, unit=?, perishable=?, last_updated=? WHERE id=?",
+            (
+                request.form["name"],
+                request.form["category"],
+                request.form["quantity"],
+                request.form["unit"],
+                request.form["perishable"],
+                datetime.datetime.now(datetime.timezone.utc),
+                ingredient_id,
+            ),
+        )
+        conn.commit()
+
+        return redirect("/recipes/pantry")
+    return render_template("edit_ingredient.html", row=rows[0])
+
+
 @app.route("/recipes/pantry")
 def ingred():
     cur = get_db().cursor()
-    cur.execute("SELECT * FROM ingredients")
+    cur.execute("SELECT * FROM ingredients WHERE quantity IS NOT NULL")
     rows = cur.fetchall()
-    print(rows)
+
     return render_template("ingredients.html", rows=rows)
 
 
@@ -246,13 +400,12 @@ def suggest():
     cur = get_db().cursor()
     cur.execute("SELECT name FROM ingredients")
     rows = cur.fetchall()
-    print(rows)
+
     ingredient_str = ""
 
     for i in rows:
         ingredient_str = ingredient_str + "- " + i["name"] + "\n"
 
-    print(ingredient_str)
     cur.execute("SELECT recipe_name FROM recipes")
     rows = cur.fetchall()
 
@@ -260,7 +413,6 @@ def suggest():
 
     for i, x in enumerate(rows):
         recipe_str = recipe_str + str(i + 1) + ". " + x["recipe_name"] + "\n"
-    print(recipe_str)
 
     completion = client.chat.completions.create(
         model="gpt-4o-mini",
@@ -290,7 +442,7 @@ Tell me which of the recipes I have provided is a good match for the ingredients
 @app.route("/recipes/search")
 def search_recipe():
     keyword = request.args.get("keyword")
-    print(keyword)
+
     cur = get_db().cursor()
 
     cur.execute(
@@ -306,7 +458,6 @@ def search_recipe():
     )
     rows = cur.fetchall()
 
-    print(rows)
     return render_template("search_recipe.html", rows=rows, keyword=keyword)
 
 
@@ -341,7 +492,6 @@ def favorite_recipe(recipe_id):
     cur = conn.cursor()
     cur.execute("SELECT favorite from recipes where recipe_id = ?", (recipe_id,))
     fave = cur.fetchone()
-    print(recipe_id, fave["favorite"])
 
     cur.execute(
         "UPDATE recipes SET favorite = ? WHERE recipe_id = ?",
@@ -357,7 +507,7 @@ def favorites():
     cur = get_db().cursor()
     cur.execute("SELECT * FROM recipes WHERE deleted=0 and favorite=1")
     rows = cur.fetchall()
-    print(rows)
+
     return render_template("recipes.html", rows=rows)
 
 
@@ -407,7 +557,7 @@ migrations = [
 
 
 with app.app_context():
-    print("initializing")
+
     db = get_db()
     cur = db.cursor()
     cur.execute(

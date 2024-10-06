@@ -2,7 +2,7 @@
 endblock %} {% block body %}
 
 <div class="recipe-body">
-  <div class="recipe-header column align-center">
+  <div class="recipe-header column align-center w-100">
     <h1>
       <a class="black" href="/recipes/{{rows[0]['recipe_id']}}/edit"
         >{{ rows[0]["recipe_name"] }}</a
@@ -19,15 +19,15 @@ endblock %} {% block body %}
       </a>
     </h1>
 
-    <div class="recipe-image light-green-bg fit-content border-radius">
+    <div class="recipe-image light-green-bg border-radius">
       <img
         src="/uploads/{{rows[0]['img_str_file']}}"
         alt="recipe-image"
-        width="500"
+        width="100%"
         height="auto"
       />
       <div class="recipe-stats vertical-padding-1">
-        <div class="row space-between">
+        <div class="recipe-stats-grid">
           <div class="row align-center">
             <div>
               <span class="material-symbols-outlined"> globe </span>
@@ -75,18 +75,25 @@ endblock %} {% block body %}
       </div>
     </div>
 
-    <div class="w-500">
+    <div class="w-100">
       <h2>Ingredients</h2>
-      <p>[to add later: currently hardcode]</p>
+      <ul>
+        {% for ingredient in ingredients %}
+        <li>
+          {{ingredient['quantity']}} {{ingredient['unit']}}
+          {{ingredient['name']}}
+        </li>
+        {% endfor %}
+      </ul>
     </div>
 
-    <div class="w-500">
+    <div class="w-100">
       <h2>Instructions</h2>
       <pre>{{rows[0]["instructions"]}}</pre>
     </div>
     {% if rows[0]["additional_notes"]|length > 0 %}
 
-    <div class="w-500">
+    <div class="w-100">
       <h2>Additional Notes</h2>
       <pre>{{rows[0]["additional_notes"]}}</pre>
     </div>

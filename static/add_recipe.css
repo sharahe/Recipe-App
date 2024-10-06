@@ -1,3 +1,36 @@
 .recipe-ingredients {
   border-radius: 8px;
 }
+#add-ingredient-button {
+  margin-bottom: 2px;
+}
+.input-container .add-ingredient-input .ingredient-quantity {
+  border-right: none;
+  border-radius: 0px;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  width: 75px;
+}
+.input-container .add-ingredient-input .ingredient-unit {
+  border-right: none;
+  border-left: none;
+  border-radius: 0px;
+  margin-left: -4px;
+  width: 75px;
+}
+.input-container .add-ingredient-input .ingredient-name {
+  border-left: none;
+  border-radius: 0px;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  margin-left: -4px;
+  width: 150px;
+}
+.ingredient-quantity:focus,
+.ingredient-unit:focus,
+.ingredient-name:focus {
+  outline: none;
+}
+.add-ingredient-input {
+  width: fit-content;
+}

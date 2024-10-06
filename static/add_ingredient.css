@@ -6,6 +6,10 @@
   padding-left: 28px;
   padding-top: 28px;
 }
+.center-header {
+  font-size: 24px;
+  padding-top: 28px;
+}
 
 .recipe-details {
   padding: 20px;

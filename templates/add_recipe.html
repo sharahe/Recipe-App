@@ -1,101 +1,95 @@
-
-{% extends "base.html" %}
-{% block title %} Add Recipe
-{% endblock %}
-{% block body %}
+{% extends "base.html" %} {% block title %} Add Recipe {% endblock %} {% block
+body %}
 
 <div class="add-recipe-page">
-
   <div class="add-recipe-header">Add Recipe</div>
-<form method="POST" enctype=multipart/form-data>
-  
-  <div class="recipe-details">
-   
-    <div class="input-container">
-      <label>Add Image</label>
-      <input type=file name="add-image"/>
-    </div>
-    <div class="input-container">
-      <label>Recipe Name</label>
-      <input type="text"  name="name" />
-    </div>
-    <div class="input-container">
-      <label>Cuisine</label>
-      <select  name="cuisine" >
-        <option value="American">American</option>
-        <option value="Chinese">Chinese</option>
-        <option value="Japanese">Japanese</option>
-        <option value="Italian">Italian</option>
-        <option value="Mediterranean">Mediterranean</option>
-      </select>
-    </div>
-    <div class="input-container">
-      <label>Link to Recipe</label>
-      <input type="text"  name="recipe-url" />
-    </div>
-    <div class="input-container">
-      <label>Serving Size</label>
-      <input
-        type="number"
-        class="input-small"
-        name="serving-size"
-        min="1"
-        max="20"
-      />
-    </div>
-    <div class="input-container">
-      <label>Prep Time</label>
-      <div class="row vertical-center">
-      <input
-        type="number"
-        class="input-small"
-        name="prep-time"
-        min="0"
-        max="10000"
-      />
-      <div class="padding-left-1">min</div>
-    </div>
-    </div>
-    <div class="input-container">
-      <label>Cook Time</label>
-      <div class="row vertical-center">
-      <input
-        type="number"
-     class="input-small"
-        name="cook-time"
-        min="0"
-        max="10000"
-      />
-      <div class="padding-left-1">min</div>
-      
-    </div>
-    </div>
-    <div class="input-container">
-      <label>Ingredients</label>
-      <input type="text"  name="ingredients" />
-    </div>
-    <div class="input-container">
-      <label>Instructions</label>
-      <textarea
-        rows="10"
-        cols="70"
-        name="instructions"
-      ></textarea>
-    </div>
-    <div class="input-container">
-      <label>Additional Notes</label>
-      <textarea  rows="5" cols="70" name="notes"></textarea>
-    </div>
-    <div class="input-container">
-    <button class="button" type="submit">Save Recipe</button>
-  </div>
-  </div>
-</form>
-</div>
-{% endblock %}
+  <form method="POST" enctype="multipart/form-data">
+    <div class="recipe-details">
+      <div class="input-container">
+        <label>Add Image</label>
+        <input type="file" name="add-image" />
+      </div>
+      <div class="input-container">
+        <label>Recipe Name</label>
+        <input type="text" name="name" />
+      </div>
+      <div class="input-container">
+        <label>Cuisine</label>
+        <select name="cuisine">
+          <option value="" selected hidden>Select Cuisine</option>
+          <option value="American">American</option>
+          <option value="Chinese">Chinese</option>
+          <option value="Japanese">Japanese</option>
+          <option value="Italian">Italian</option>
+          <option value="Mediterranean">Mediterranean</option>
+        </select>
+      </div>
+      <div class="input-container">
+        <label>Link to Recipe</label>
+        <input type="text" name="recipe-url" />
+      </div>
+      <div class="input-container">
+        <label>Serving Size</label>
+        <input
+          type="number"
+          class="input-small"
+          name="serving-size"
+          min="1"
+          max="20"
+        />
+      </div>
+      <div class="input-container">
+        <label>Prep Time</label>
+        <div class="row vertical-center">
+          <input
+            type="number"
+            class="input-small"
+            name="prep-time"
+            min="0"
+            max="10000"
+          />
+          <div class="padding-left-1">min</div>
+        </div>
+      </div>
+      <div class="input-container">
+        <label>Cook Time</label>
+        <div class="row vertical-center">
+          <input
+            type="number"
+            class="input-small"
+            name="cook-time"
+            min="0"
+            max="10000"
+          />
+          <div class="padding-left-1">min</div>
+        </div>
+      </div>
 
-<!-- TODO:
- - add image to cards
- - add title/recipe names to cards
- - add category tag to the cards 
- - unsure how to get cuisin dropdown to show up-->
+      <div class="input-container">
+        <div id="ingredients"></div>
+      </div>
+      <div class="input-container">
+        <label>Instructions</label>
+        <textarea rows="10" cols="70" name="instructions"></textarea>
+      </div>
+      <div class="input-container">
+        <label>Additional Notes</label>
+        <textarea rows="5" cols="70" name="notes"></textarea>
+      </div>
+      <div class="input-container">
+        <button class="button" type="submit">Save Recipe</button>
+      </div>
+    </div>
+  </form>
+</div>
+<script type="module">
+  import { render } from "https://esm.sh/preact";
+  import { App, html } from "/static/recipe-ingredients.js";
+  const ingredients = document.getElementById("ingredients");
+  render(
+    html`<${App} inputs=${[{ name: "", unit: "", quantity: Number }]} />`,
+    ingredients
+  );
+</script>
+
+{% endblock %}

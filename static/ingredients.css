@@ -58,3 +58,7 @@ th {
 .bold {
   font-weight: bold;
 }
+
+.none {
+  display: none;
+}
