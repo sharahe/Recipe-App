@@ -62,8 +62,12 @@ th {
 .none {
   display: none;
 }
-@media (min-width: 1000px) {
-  .none {
+
+@media (min-width: 800px) {
+  .md-table-cell {
     display: table-cell;
+  }
+  .md-block {
+    display: block;
   }
 }

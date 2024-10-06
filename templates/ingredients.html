@@ -3,9 +3,11 @@
 <div class="column align-center">
   <div class="table-container column">
     <div class="row space-between align-center vertical-padding-1">
-      <div class="margin-left-2 bold">Ingredients</div>
+      <div class="margin-left-2 bold none md-block">Ingredients</div>
       <div class="row">
-        <a href="/recipes/pantry/add" class="button">Add Ingredient</a>
+        <a href="/recipes/pantry/add" class="button margin-left-1"
+          >Add Ingredient</a
+        >
         <a href="/recipes/suggest" class="button margin-left-1 margin-right-1"
           >Suggest Recipe</a
         >
@@ -14,10 +16,10 @@
     <table>
       <tr>
         <th>Ingredient</th>
-        <th class="none">Category</th>
+        <th class="none md-table-cell">Category</th>
         <th>Amount</th>
-        <th class="none">Perishable?</th>
-        <th class="none">Last Updated</th>
+        <th class="none md-table-cell">Perishable?</th>
+        <th class="none md-table-cell">Last Updated</th>
       </tr>
       {% for row in rows %}
 
@@ -27,10 +29,12 @@
             >{{row["name"]}}</a
           >
         </td>
-        <td class="none">{{row["category"]}}</td>
+        <td class="none md-table-cell">{{row["category"]}}</td>
         <td>{{row["quantity"]}} {{row["unit"]}}</td>
-        <td class="none">{{row["perishable"]}}</td>
-        <td class="none">{{row["last_updated"].split(" ")[0]}}</td>
+        <td class="none md-table-cell">{{row["perishable"]}}</td>
+        <td class="none md-table-cell">
+          {{row["last_updated"].split(" ")[0]}}
+        </td>
       </tr>
 
       {% endfor %}
