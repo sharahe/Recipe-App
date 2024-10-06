@@ -1,9 +1,11 @@
 * {
   box-sizing: border-box;
 }
+
 body {
   margin: 0;
   display: flex;
+  flex-direction: column;
   font-family: "Rubik", sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
@@ -17,11 +19,16 @@ body {
   padding: 10px;
   color: var(--primary-brown);
   text-align: center;
-  display: flex;
-  flex-direction: column;
+  display: relative;
   width: 175px;
 }
-
+#nav .icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding-top: 12px;
+  padding-right: 7px;
+}
 #nav a {
   margin-bottom: 20px;
   display: flex;
@@ -33,7 +40,9 @@ body {
 #nav a span {
   padding-right: 5px;
 }
-
+#nav a.title {
+  margin-bottom: 0px;
+}
 .content {
   width: 100%;
   height: 100vh;
@@ -45,4 +54,16 @@ body {
 }
 .filled {
   font-variation-settings: "FILL" 1;
+}
+#mobile-nav {
+  display: none;
+}
+#desktop-nav {
+  display: none;
+}
+#mobile-nav a:first-child {
+  margin-top: 10px;
+}
+#mobile-nav a:last-child {
+  margin-bottom: 0px;
 }
