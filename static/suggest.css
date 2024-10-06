@@ -6,3 +6,8 @@
   padding: 10px;
   background-color: white;
 }
+@media (min-width: 1000px) {
+  .gpt-response {
+    width: 800px;
+  }
+}
