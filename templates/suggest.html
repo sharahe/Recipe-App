@@ -1,4 +1,11 @@
 {% extends "base.html" %} {% block title %} Suggest Recipes {% endblock %} {%
 block body %}
-<pre>{{chat}}</pre>
+<div class="column align-center">
+  <div class="center-header">Suggested Recipes (AI Assist)</div>
+  <div class="recipe-details">
+    <pre class="gpt-response align-center">
+        {{chat}}
+    </pre>
+  </div>
+</div>
 {% endblock %}

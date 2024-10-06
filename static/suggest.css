@@ -1,0 +1,8 @@
+.gpt-response {
+  width: 100%;
+  border: 1px solid lightgray;
+  border-radius: 8px;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  background-color: white;
+}
