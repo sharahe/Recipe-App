@@ -98,7 +98,7 @@ endblock %} {% block body %}
         </div>
       </div>
     </div>
-
+    {% if rows[0]["instructions"]|length > 0 %}
     <div class="w-100">
       <h2>Ingredients</h2>
       <ul>
@@ -110,16 +110,21 @@ endblock %} {% block body %}
         {% endfor %}
       </ul>
     </div>
-
+    {% endif %} {% if rows[0]["instructions"]|length > 0 %}
     <div class="w-100">
       <h2>Instructions</h2>
       <pre>{{rows[0]["instructions"]}}</pre>
     </div>
-    {% if rows[0]["additional_notes"]|length > 0 %}
+    {% endif %} {% if rows[0]["additional_notes"]|length > 0 %}
 
     <div class="w-100">
       <h2>Additional Notes</h2>
       <pre>{{rows[0]["additional_notes"]}}</pre>
+    </div>
+    {% endif %} {% if rows[0]["video_tips"]|length > 0 %}
+    <div class="w-100">
+      <h2>Video Tips (AI Assist)</h2>
+      <pre>{{rows[0]["video_tips"]}}</pre>
     </div>
     {% endif %}
   </div>

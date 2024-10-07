@@ -14,7 +14,8 @@
   /* green to coral */
   --primary-green: #688a50;
   --secondary-green: rgb(156, 177, 127);
-  --neutral-white: #faf6eb;
+  /* --neutral-white: #faf6eb; */
+  --neutral-white: #f0e9d5;
   --primary-brown: #f9d2bf;
   --secondary-brown: #ed7d6c;
 }

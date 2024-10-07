@@ -113,7 +113,7 @@ def recipes_add():
         )
 
         cur.execute(
-            "INSERT INTO recipes ( recipe_name, cuisine, serving_size, prep_time, cook_time, total_time, instructions, additional_notes, img_str_file, recipe_search_id, url) values (?,?,?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO recipes ( recipe_name, cuisine, serving_size, prep_time, cook_time, total_time, instructions, additional_notes, img_str_file, recipe_search_id, url, video_tips) values (?,?,?,?,?,?,?,?,?,?,?,?)",
             (
                 request.form["name"],
                 request.form["cuisine"],
@@ -134,6 +134,7 @@ def recipes_add():
                 filename,
                 cur.lastrowid,
                 request.form["recipe-url"],
+                request.form["video-tips"],
             ),
         )
 
@@ -334,7 +335,7 @@ def recipe_edit(recipe_id):
         if filename == "":
 
             cur.execute(
-                "UPDATE recipes SET recipe_name = ?, cuisine = ?, serving_size = ?, prep_time = ?, cook_time = ?, total_time = ?, instructions = ?, additional_notes = ?, url=? WHERE recipe_id = ? AND deleted=0",
+                "UPDATE recipes SET recipe_name = ?, cuisine = ?, serving_size = ?, prep_time = ?, cook_time = ?, total_time = ?, instructions = ?, additional_notes = ?, url=?, video_tips = ? WHERE recipe_id = ? AND deleted=0",
                 (
                     request.form["name"],
                     request.form["cuisine"],
@@ -353,12 +354,13 @@ def recipe_edit(recipe_id):
                     request.form["instructions"],
                     request.form["notes"],
                     request.form["recipe-url"],
+                    request.form["video-tips"],
                     recipe_id,
                 ),
             )
         else:
             cur.execute(
-                "UPDATE recipes SET recipe_name = ?, cuisine = ?, serving_size = ?, prep_time = ?, cook_time = ?, total_time = ?, instructions = ?, additional_notes = ?, url=?, img_str_file= ? WHERE recipe_id = ? AND deleted=0",
+                "UPDATE recipes SET recipe_name = ?, cuisine = ?, serving_size = ?, prep_time = ?, cook_time = ?, total_time = ?, instructions = ?, additional_notes = ?, url=?, video_tips = ?, img_str_file= ? WHERE recipe_id = ? AND deleted=0",
                 (
                     request.form["name"],
                     request.form["cuisine"],
@@ -377,6 +379,7 @@ def recipe_edit(recipe_id):
                     request.form["instructions"],
                     request.form["notes"],
                     request.form["recipe-url"],
+                    request.form["video-tips"],
                     filename,
                     recipe_id,
                 ),
@@ -688,6 +691,7 @@ migrations = [
     "ALTER TABLE recipes ADD COLUMN recipe_search_id INTEGER",
     "ALTER TABLE recipes ADD COLUMN favorite BOOLEAN DEFAULT FALSE",
     "ALTER TABLE recipes ADD COLUMN url TEXT",
+    "ALTER TABLE recipes ADD COLUMN video_tips TEXT",
 ]
 
 
@@ -715,3 +719,6 @@ with app.app_context():
                 (i + max_version + 1, n.isoformat()),
             )
             db.commit()
+
+
+import generate_tips

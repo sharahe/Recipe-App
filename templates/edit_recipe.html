@@ -97,6 +97,13 @@
 {{ rows[0]['additional_notes']}}</textarea
       >
     </div>
+    <div class="input-container">
+      <label>Video Tips (AI Assist)</label>
+      <textarea class="form-id" rows="5" cols="70" name="video-tips">
+{{ rows[0]['video_tips']}}</textarea
+      >
+    </div>
+    
     <div class="row padding-left-2">
     <button class="button" type="submit">Save Changes</button>
     <a class="button margin-left-1" href="/recipes/{{rows[0]['recipe_id']}}/delete">Delete</a>
@@ -119,8 +126,4 @@
   </script>
 {% endblock %}
 
-<!-- TODO:
- - add image to cards
- - add title/recipe names to cards
- - add category tag to the cards 
- - unsure how to get cuisin dropdown to show up-->
+

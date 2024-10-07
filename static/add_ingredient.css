@@ -1,5 +1,6 @@
 .add-recipe-page {
-  background-color: rgb(239, 198, 127);
+  /* background-color: rgb(239, 198, 127); */
+  background-color: var(--neutral-white);
 }
 .add-recipe-header {
   font-size: 24px;

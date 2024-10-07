@@ -83,6 +83,7 @@ body %}
         <label>Additional Notes</label>
         <textarea rows="5" cols="70" name="notes"></textarea>
       </div>
+      <div id="tips"></div>
       <div class="input-container">
         <button class="button" type="submit">Save Recipe</button>
       </div>
@@ -90,13 +91,87 @@ body %}
   </form>
 </div>
 <script type="module">
-  import { render } from "https://esm.sh/preact";
+  import { render, Component } from "https://esm.sh/preact";
   import { App, html } from "/static/recipe-ingredients.js";
   const ingredients = document.getElementById("ingredients");
   render(
     html`<${App} inputs=${[{ name: "", unit: "", quantity: Number }]} />`,
     ingredients
   );
+
+  class Tips extends Component {
+    state = { loading: false, result: null, url: null };
+    generate = (ev) => {
+      console.log("GENERATING");
+      this.setState({ ...this.state, loading: true });
+      fetch("/generate_tips", {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({
+          url: this.state.url,
+        }),
+      })
+        .then((r) => r.json())
+        .then((j) => {
+          console.log(j);
+          let output_tip = "";
+          for (let i = 0; i < j["recipe_tips"].length; i++) {
+            output_tip = output_tip.concat(
+              " ",
+              j["recipe_tips"][i]["tip_number"],
+              ". ",
+              j["recipe_tips"][i]["tip_msg"],
+              " ",
+              j["recipe_tips"][i]["reasoning"],
+              "\n"
+            );
+          }
+          console.log(output_tip);
+          this.setState({ result: output_tip, loading: false });
+        })
+        .catch(function (res) {
+          console.log(res);
+        });
+    };
+
+    onUrlChange = (ev) => {
+      console.log("on URL Change", ev);
+      this.setState({ ...this.state, url: ev.currentTarget.value });
+    };
+
+    render() {
+      return html`
+        <div class="input-container">
+          <label>${this.state.result == null ? "Video URL" : "Tips"}</label>
+          ${this.state.result == null
+            ? html`<input type="text" onInput=${this.onUrlChange} />`
+            : html`<textarea
+                class="form-id"
+                rows="5"
+                cols="70"
+                name="video-tips"
+              >
+${this.state.result}</textarea
+              >`}
+          <div class="gen-tip-button-container">
+            ${this.state.result == null &&
+            html`<a onClick=${this.generate} class="button ai-button">
+              Generate Video Tips (AI)
+            </a>`}
+            ${this.state.loading &&
+            html` <div>
+              <div class="lds-dual-ring"></div>
+            </div>`}
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  render(html`<${Tips} />`, document.getElementById("tips"));
 </script>
 
 {% endblock %}
