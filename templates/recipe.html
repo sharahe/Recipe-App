@@ -7,13 +7,15 @@ endblock %} {% block body %}
       <a class="black" href="/recipes/{{rows[0]['recipe_id']}}/edit"
         >{{ rows[0]["recipe_name"] }}</a
       >
-      {% if rows[0]["url"] is not none %}
+
+      {% if rows[0]["url"] is not none and rows[0]["url"]|length >0 %}
 
       <a href="{{rows[0]['url']}}"
         ><span class="material-symbols-outlined margin-left-2 remove-link">
           link
         </span></a
       >{% endif %}
+
       <a
         class="remove-link margin-left-1"
         href="/recipes/{{rows[0]['recipe_id']}}/favorite"

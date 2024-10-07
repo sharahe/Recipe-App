@@ -3,7 +3,19 @@ block body %}
 <div class="column align-center">
   <div class="center-header">Suggested Recipes (AI Assist)</div>
   <div class="recipe-details">
-    <pre class="gpt-response align-center">
+    <div class="gpt-response align-center">
+      <ol>
+        {% for i in chat["recipes"] %}
+        <li>
+          <a href="/recipes/{{i['id']}}"
+            >{{top_recipes[loop.index0]["recipe_name"]}}
+          </a>
+          - {{i["reasoning"]}}
+        </li>
+        {% endfor %}
+      </ol>
+    </div>
+    <pre>
         {{chat}}
     </pre>
   </div>

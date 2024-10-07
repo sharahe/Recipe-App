@@ -1,11 +1,16 @@
 import sqlite3
 import os
 from flask import g
-from flask import Flask, request, redirect, flash, send_from_directory
+from flask import Flask, request, redirect, flash, send_from_directory, url_for
 from flask import render_template
 from werkzeug.utils import secure_filename
 import datetime
 from openai import OpenAI
+import json
+import random
+import shutil
+import math
+import requests
 
 client = OpenAI()
 
@@ -67,9 +72,26 @@ def recipes_add():
             return redirect(request.url)
         file = request.files["add-image"]
         if file.filename == "":
-            flash("No selected file")
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
+            response = client.images.generate(
+                model="dall-e-2",
+                prompt=request.form["name"]
+                + " high quality photography using Canon EOS R3.",
+                size="256x256",
+                quality="standard",
+                n=1,
+            )
+            gen_img = response.data[0].url
+            rand = math.floor(random.random() * 1000)
+            filename = secure_filename(request.form["name"] + str(rand) + ".png")
+
+            response = requests.get(gen_img, stream=True)
+            with open(
+                os.path.join(app.config["UPLOAD_FOLDER"], filename), "wb"
+            ) as out_file:
+                shutil.copyfileobj(response.raw, out_file)
+            del response
+
+        elif file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
 
@@ -142,6 +164,7 @@ def recipes_add():
 
         conn.commit()
 
+        # return redirect(url_for("/recipes/" + str(recipe_id), gen_img=gen_img))
         return redirect("/recipes/" + str(recipe_id))
     return render_template("add_recipe.html")
 
@@ -424,7 +447,7 @@ def ingred_from_recipe():
 @app.route("/recipes/suggest")
 def suggest():
     cur = get_db().cursor()
-    cur.execute("SELECT name FROM ingredients")
+    cur.execute("SELECT name FROM ingredients WHERE quantity IS NOT NULL")
     rows = cur.fetchall()
 
     ingredient_str = ""
@@ -432,13 +455,13 @@ def suggest():
     for i in rows:
         ingredient_str = ingredient_str + "- " + i["name"] + "\n"
 
-    cur.execute("SELECT recipe_name FROM recipes")
+    cur.execute("SELECT recipe_id, recipe_name FROM recipes WHERE deleted = 0")
     rows = cur.fetchall()
 
     recipe_str = ""
 
     for i, x in enumerate(rows):
-        recipe_str = recipe_str + str(i + 1) + ". " + x["recipe_name"] + "\n"
+        recipe_str = recipe_str + str(x["recipe_id"]) + ". " + x["recipe_name"] + "\n"
 
     completion = client.chat.completions.create(
         model="gpt-4o-mini",
@@ -452,16 +475,59 @@ def suggest():
 I have the following ingredients: 
 {}
 
-Tell me which of the recipes I have provided is a good match for the ingredients I have.  There can be up to 3 matches, but don't include the recipe if we don't have most of the ingredients needed. Rank the recipes by how many of the ingredients are used. Reference the recipe by its number listed above. Do not list out the recipe steps, just the number""".format(
+Tell me which of the recipes I have provided is a good match for the ingredients I have.  There can be up to 3 matches, but don't include the recipe if we don't have most of the ingredients needed. Rank the recipes by how many of the ingredients are used. Reference the recipe by its number listed above. Do not list out the recipe steps, just the number. Do not start the reasoning with the recipe name.""".format(
                     recipe_str, ingredient_str
                 ),
             },
         ],
+        response_format={
+            "type": "json_schema",
+            "json_schema": {
+                "name": "ingredient_reasoning",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "recipes": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {"type": "number"},
+                                    "reasoning": {"type": "string"},
+                                },
+                                "required": ["id", "reasoning"],
+                                "additionalProperties": False,
+                            },
+                        },
+                    },
+                    "required": ["recipes"],
+                    "additionalProperties": False,
+                },
+                "strict": True,
+            },
+        },
     )
-
+    print(recipe_str, ingredient_str)
     print(completion.choices[0].message)
+
+    output = json.loads(completion.choices[0].message.content)
+    top_recipes = []
+    for i in output["recipes"]:
+
+        recipe_id = i["id"]
+        recipe_reasoning = i["reasoning"]
+        print(recipe_id, type(recipe_id))
+        cur = get_db().cursor()
+        cur.execute(
+            "SELECT * FROM recipes WHERE deleted = 0 and recipe_id = ?",
+            (recipe_id,),
+        )
+        recipe_details = cur.fetchone()
+        top_recipes.append(recipe_details)
+        # print(recipe_details["recipe_name"])
+
     return render_template(
-        "suggest.html", rows=rows, chat=completion.choices[0].message.content
+        "suggest.html", rows=rows, chat=output, top_recipes=top_recipes
     )
 
 
