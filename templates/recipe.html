@@ -56,8 +56,8 @@ endblock %} {% block body %}
             <div class="margin-left-1">
               <div class="font-small">Servings</div>
               <div class="light-bold">
-                {{rows[0]["serving_size"]}} {{'' if
-                rows[0]["serving_size"]|length >0 else '——'}}
+                {{rows[0]["serving_size"]}} {{'' if rows[0]["serving_size"]|int
+                >0 else '——'}}
               </div>
             </div>
           </div>
@@ -68,8 +68,8 @@ endblock %} {% block body %}
             <div class="margin-left-1">
               <div class="font-small">Prep</div>
               <div class="light-bold">
-                {{rows[0]["prep_time"]}} {{'min' if rows[0]["prep_time"]|length
-                >0 else '——'}}
+                {{rows[0]["prep_time"]}} {{'min' if rows[0]["prep_time"]|int >0
+                else '——'}}
               </div>
             </div>
           </div>
@@ -80,8 +80,8 @@ endblock %} {% block body %}
             <div class="margin-left-1">
               <div class="font-small">Cook</div>
               <div class="light-bold">
-                {{rows[0]["cook_time"]}} {{'min' if rows[0]["cook_time"]|length
-                >0 else '——'}}
+                {{rows[0]["cook_time"]}} {{'min' if rows[0]["cook_time"]|int >0
+                else '——'}}
               </div>
             </div>
           </div>
@@ -90,8 +90,8 @@ endblock %} {% block body %}
             <div class="margin-left-1 margin-right-1">
               <div class="font-small">Total</div>
               <div class="light-bold">
-                {{rows[0]["total_time"]}} {{'min' if
-                rows[0]["total_time"]|length >0 else '——'}}
+                {{rows[0]["total_time"]}} {{'min' if rows[0]["total_time"]|int
+                >0 else '——'}}
               </div>
             </div>
           </div>
