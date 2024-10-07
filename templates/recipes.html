@@ -3,7 +3,7 @@
 <div class="input-wrapper">
   <div class="search-bar-wrapper">
     <span class="material-symbols-outlined"> search </span>
-    <form class="search-form" action="/recipes/search">
+    <form class="search-form" action="/search">
       <input
         placeholder="What do you want to cook today?"
         type="text"
@@ -20,7 +20,7 @@
       <div class="card_recipe_link">
         <div class="inner_card">
           <div class="card_img">
-            <a href="/recipes/{{row[0]}}"
+            <a href="/{{row[0]}}"
               ><img
                 class="card-recipe-img"
                 src="/uploads/{{row['img_str_file']}}"
@@ -31,13 +31,10 @@
             </a>
           </div>
           <div class="card_recipe_text align-center">
-            <a class="remove-link" href="/recipes/{{row[0]}}"
+            <a class="remove-link" href="/{{row[0]}}"
               ><div class="card_recipe_name">{{row[1]}}</div></a
             >
-            <a
-              class="remove-link"
-              href="/recipes/{{row['recipe_id']}}/favorite"
-            >
+            <a class="remove-link" href="/{{row['recipe_id']}}/favorite">
               <span
                 class="material-symbols-outlined gray {{'filled' if row['favorite']==1 else '' }}"
               >

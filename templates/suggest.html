@@ -7,7 +7,7 @@ block body %}
       <ol>
         {% for i in chat["recipes"] %}
         <li>
-          <a href="/recipes/{{i['id']}}"
+          <a href="/{{i['id']}}"
             >{{top_recipes[loop.index0]["recipe_name"]}}
           </a>
           - {{i["reasoning"]}}

@@ -23,13 +23,6 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 
-@app.route("/")
-def index():
-    cur = get_db().cursor()
-    cur.execute("SELECT * FROM items")
-    return "<p>Hello, World!!! Main Page</p>"
-
-
 @app.route("/index/", methods=["POST", "GET"])
 def hello_index():
     if request.method == "POST":
@@ -51,7 +44,7 @@ def hello_index():
     return render_template("index.html", rows=rows)
 
 
-@app.route("/recipes/")
+@app.route("/")
 def recipes():
     cur = get_db().cursor()
     cur.execute("SELECT * FROM recipes WHERE deleted=0")
@@ -63,7 +56,7 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route("/recipes/add/", methods=["POST", "GET"])
+@app.route("/add/", methods=["POST", "GET"])
 def recipes_add():
     if request.method == "POST":
         filename = ""
@@ -174,7 +167,7 @@ def recipes_add():
 
         conn.commit()
 
-        return redirect("/recipes/" + str(recipe_id))
+        return redirect("/" + str(recipe_id))
     return render_template("add_recipe.html")
 
 
@@ -183,7 +176,7 @@ def download_file(name):
     return send_from_directory(app.config["UPLOAD_FOLDER"], name)
 
 
-@app.route("/recipes/<int:recipe_id>")
+@app.route("/<int:recipe_id>")
 def recipe(recipe_id):
     cur = get_db().cursor()
     cur.execute("SELECT * FROM recipes WHERE recipe_id = ? AND deleted=0", (recipe_id,))
@@ -197,7 +190,7 @@ def recipe(recipe_id):
     return render_template("recipe.html", rows=rows, ingredients=ingredients)
 
 
-@app.route("/recipes/<int:recipe_id>/ingredients")
+@app.route("/<int:recipe_id>/ingredients")
 def recipe_ingredient_json(recipe_id):
     conn = get_db()
     cur = conn.cursor()
@@ -217,7 +210,7 @@ def recipe_ingredient_json(recipe_id):
     return {"ingredients": ingredients_ls}
 
 
-@app.route("/recipes/<int:recipe_id>/edit", methods=["POST", "GET"])
+@app.route("/<int:recipe_id>/edit", methods=["POST", "GET"])
 def recipe_edit(recipe_id):
     conn = get_db()
     cur = conn.cursor()
@@ -385,11 +378,11 @@ def recipe_edit(recipe_id):
                 ),
             )
         conn.commit()
-        return redirect("/recipes/" + str(recipe_id))
+        return redirect("/" + str(recipe_id))
     return render_template("edit_recipe.html", rows=rows)
 
 
-@app.route("/recipes/<int:recipe_id>/delete")
+@app.route("/<int:recipe_id>/delete")
 def recipe_delete(recipe_id):
     conn = get_db()
     cur = conn.cursor()
@@ -400,10 +393,10 @@ def recipe_delete(recipe_id):
     cur.execute("DELETE FROM recipe_search where rowid = ?", (row[0],))
     cur.execute("UPDATE recipes SET deleted=TRUE WHERE recipe_id = ?", (recipe_id,))
     conn.commit()
-    return redirect("/recipes/")
+    return redirect("/")
 
 
-@app.route("/recipes/pantry/add", methods=["POST", "GET"])
+@app.route("/pantry/add", methods=["POST", "GET"])
 def ingred_add():
     if request.method == "POST":
 
@@ -422,11 +415,11 @@ def ingred_add():
         )
         conn.commit()
 
-        return redirect("/recipes/pantry")
+        return redirect("/pantry")
     return render_template("add_ingredient.html")
 
 
-@app.route("/recipes/pantry/<int:ingredient_id>/edit", methods=["POST", "GET"])
+@app.route("/pantry/<int:ingredient_id>/edit", methods=["POST", "GET"])
 def ingred_edit(ingredient_id):
     conn = get_db()
     cur = conn.cursor()
@@ -448,11 +441,11 @@ def ingred_edit(ingredient_id):
         )
         conn.commit()
 
-        return redirect("/recipes/pantry")
+        return redirect("/pantry")
     return render_template("edit_ingredient.html", row=rows[0])
 
 
-@app.route("/recipes/pantry")
+@app.route("/pantry")
 def ingred():
     cur = get_db().cursor()
     cur.execute("SELECT * FROM ingredients WHERE quantity IS NOT NULL")
@@ -461,7 +454,7 @@ def ingred():
     return render_template("ingredients.html", rows=rows)
 
 
-@app.route("/recipes/pantry/recipe")
+@app.route("/pantry/recipe")
 def ingred_from_recipe():
     cur = get_db().cursor()
 
@@ -471,7 +464,7 @@ def ingred_from_recipe():
     return render_template("ingredients.html", rows=rows)
 
 
-@app.route("/recipes/suggest")
+@app.route("/suggest")
 def suggest():
     cur = get_db().cursor()
     cur.execute("SELECT name FROM ingredients WHERE quantity IS NOT NULL")
@@ -558,7 +551,7 @@ Tell me which of the recipes I have provided is a good match for the ingredients
     )
 
 
-@app.route("/recipes/search")
+@app.route("/search")
 def search_recipe():
     keyword = request.args.get("keyword")
 
@@ -580,7 +573,7 @@ def search_recipe():
     return render_template("search_recipe.html", rows=rows, keyword=keyword)
 
 
-@app.route("/recipes/import_search")
+@app.route("/import_search")
 def import_recipe_search():
     conn = get_db()
     cur = conn.cursor()
@@ -602,10 +595,10 @@ def import_recipe_search():
             (cur.lastrowid, i["recipe_id"]),
         )
         conn.commit()
-    return redirect("/recipes")
+    return redirect("/")
 
 
-@app.route("/recipes/<int:recipe_id>/favorite")
+@app.route("/<int:recipe_id>/favorite")
 def favorite_recipe(recipe_id):
     conn = get_db()
     cur = conn.cursor()
@@ -621,7 +614,7 @@ def favorite_recipe(recipe_id):
     return redirect(request.referrer)
 
 
-@app.route("/recipes/favorites")
+@app.route("/favorites")
 def favorites():
     cur = get_db().cursor()
     cur.execute("SELECT * FROM recipes WHERE deleted=0 and favorite=1")
@@ -645,7 +638,7 @@ def reset():
     with app.open_resource("dump.sql", mode="r") as f:
         conn.cursor().executescript(f.read())
     conn.commit()
-    return redirect("/recipes")
+    return redirect("/")
 
 
 # def get_records():

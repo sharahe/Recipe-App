@@ -106,7 +106,7 @@
     
     <div class="row padding-left-2">
     <button class="button" type="submit">Save Changes</button>
-    <a class="button margin-left-1" href="/recipes/{{rows[0]['recipe_id']}}/delete">Delete</a>
+    <a class="button margin-left-1" href="/{{rows[0]['recipe_id']}}/delete">Delete</a>
   </div>
   </div>
 </form>
@@ -114,7 +114,7 @@
 <script type="module">
   import { render } from "https://esm.sh/preact";
   import { App, html } from "/static/recipe-ingredients.js";
-  fetch("/recipes/{{rows[0]['recipe_id']}}/ingredients").then(r => r.json()).then(j => {
+  fetch("/{{rows[0]['recipe_id']}}/ingredients").then(r => r.json()).then(j => {
     const ingredients = document.getElementById("ingredients");
   render(
     html`<${App} inputs=${j["ingredients"]} />`,

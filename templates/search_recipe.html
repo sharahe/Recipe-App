@@ -3,7 +3,7 @@
 <div class="input-wrapper">
   <div class="search-bar-wrapper">
     <span class="material-symbols-outlined"> search </span>
-    <form action="/recipes/search">
+    <form action="/search">
       <input
         placeholder="What do you want to cook today?"
         type="text"
@@ -18,7 +18,7 @@
   <div class="gallery-row">
     {% for row in rows %}
     <div class="recipe">
-      <a class="card_recipe_link" href="/recipes/{{row[0]}}">
+      <a class="card_recipe_link" href="/{{row[0]}}">
         <div class="inner_card">
           <div class="card_img">
             <img

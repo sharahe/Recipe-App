@@ -4,7 +4,7 @@ endblock %} {% block body %}
 <div class="recipe-body">
   <div class="recipe-header column align-center w-100">
     <h1>
-      <a class="black" href="/recipes/{{rows[0]['recipe_id']}}/edit"
+      <a class="black" href="/{{rows[0]['recipe_id']}}/edit"
         >{{ rows[0]["recipe_name"] }}</a
       >
 
@@ -18,7 +18,7 @@ endblock %} {% block body %}
 
       <a
         class="remove-link margin-left-1"
-        href="/recipes/{{rows[0]['recipe_id']}}/favorite"
+        href="/{{rows[0]['recipe_id']}}/favorite"
       >
         <span
           class="material-symbols-outlined {{'filled' if rows[0]['favorite']==1 else '' }}"
