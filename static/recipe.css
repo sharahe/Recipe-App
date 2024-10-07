@@ -125,8 +125,18 @@ pre {
 .gray {
   color: rgb(156, 154, 154);
 }
-@media (min-width: 1000px) {
+
+@media (min-width: 650px) {
   .w-100 {
     width: 600px;
+  }
+}
+
+@media (min-width: 650px) {
+  .light-bold {
+    font-size: 15px;
+  }
+  .cuisine-font {
+    font-size: 13px;
   }
 }
