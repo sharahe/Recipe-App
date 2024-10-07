@@ -110,13 +110,20 @@ def recipes_add():
         cur.execute(
             "INSERT INTO recipes ( recipe_name, cuisine, serving_size, prep_time, cook_time, total_time, instructions, additional_notes, img_str_file, recipe_search_id, url) values (?,?,?,?,?,?,?,?,?,?,?)",
             (
-                # request.form["recipe_id"], # autoincrements on its own?
                 request.form["name"],
                 request.form["cuisine"],
                 request.form["serving-size"],
                 request.form["prep-time"],
                 request.form["cook-time"],
-                float(request.form["prep-time"]) + float(request.form["cook-time"]),
+                (
+                    (
+                        float(request.form["prep-time"])
+                        + float(request.form["cook-time"])
+                    )
+                    if len(request.form["prep-time"]) > 0
+                    and len(request.form["cook-time"]) > 0
+                    else ""
+                ),
                 request.form["instructions"],
                 request.form["notes"],
                 filename,
@@ -130,9 +137,6 @@ def recipes_add():
         # print("INGREDIENT_NUMBER", type(request.form["ingredient-number"]))
         for i in range(int(request.form["ingredient-number"])):
 
-            # print("quantity", request.form["quantity-" + str(i)])
-            # print("unit", request.form["unit-" + str(i)])
-            # print("ingredients", request.form["ingredients-" + str(i)])
             # for every ingredient, check if it exists in the ingredients table. otherwise add to ingredients
             # add row to ingredients recipe table
             cur.execute(
@@ -333,7 +337,15 @@ def recipe_edit(recipe_id):
                     request.form["serving-size"],
                     request.form["prep-time"],
                     request.form["cook-time"],
-                    float(request.form["prep-time"]) + float(request.form["cook-time"]),
+                    (
+                        (
+                            float(request.form["prep-time"])
+                            + float(request.form["cook-time"])
+                        )
+                        if len(request.form["prep-time"]) > 0
+                        and len(request.form["cook-time"]) > 0
+                        else ""
+                    ),
                     request.form["instructions"],
                     request.form["notes"],
                     request.form["recipe-url"],
@@ -349,7 +361,15 @@ def recipe_edit(recipe_id):
                     request.form["serving-size"],
                     request.form["prep-time"],
                     request.form["cook-time"],
-                    float(request.form["prep-time"]) + float(request.form["cook-time"]),
+                    (
+                        (
+                            float(request.form["prep-time"])
+                            + float(request.form["cook-time"])
+                        )
+                        if len(request.form["prep-time"]) > 0
+                        and len(request.form["cook-time"]) > 0
+                        else ""
+                    ),
                     request.form["instructions"],
                     request.form["notes"],
                     request.form["recipe-url"],
