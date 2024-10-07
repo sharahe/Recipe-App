@@ -24,7 +24,7 @@
     <div class="input-container">
       <label>Cuisine</label>      
       <select  name="cuisine" >
-        
+        <option {{"selected"  if rows[0]['cuisine'] == "" else "" }} value="" selected hidden>Select Cuisine</option>
         <option {{"selected"  if rows[0]['cuisine'] == "American" else "" }} value="American">American</option>
         <option {{"selected"  if rows[0]['cuisine'] == "Beverage" else "" }} value="Beverage">Beverage</option>
         <option {{"selected"  if rows[0]['cuisine'] == "Breakfast" else "" }} value="Breakfast">Breakfast</option>
