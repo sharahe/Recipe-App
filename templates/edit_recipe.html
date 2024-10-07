@@ -26,15 +26,21 @@
       <select  name="cuisine" >
         
         <option {{"selected"  if rows[0]['cuisine'] == "American" else "" }} value="American">American</option>
+        <option {{"selected"  if rows[0]['cuisine'] == "Beverage" else "" }} value="Beverage">Beverage</option>
+        <option {{"selected"  if rows[0]['cuisine'] == "Breakfast" else "" }} value="Breakfast">Breakfast</option>
         <option {{"selected"  if rows[0]['cuisine'] == "Chinese" else "" }} value="Chinese">Chinese</option>
-        <option {{"selected"  if rows[0]['cuisine'] == "Japanese" else "" }} value="Japanese">Japanese</option>
+        <option {{"selected"  if rows[0]['cuisine'] == "Dessert" else "" }} value="Dessert">Dessert</option>
+        <option {{"selected"  if rows[0]['cuisine'] == "Indian" else "" }} value="Indian">Indian</option>
         <option {{"selected"  if rows[0]['cuisine'] == "Italian" else "" }} value="Italian">Italian</option>
+        <option {{"selected"  if rows[0]['cuisine'] == "Japanese" else "" }} value="Japanese">Japanese</option>
         <option {{"selected"  if rows[0]['cuisine'] == "Mediterranean" else "" }} value="Mediterranean">Mediterranean</option>
+        <option {{"selected"  if rows[0]['cuisine'] == "Mexican" else "" }} value="Mexican">Mexican</option>
+        <option {{"selected"  if rows[0]['cuisine'] == "Thai" else "" }} value="Thai">Thai</option>
       </select>
     </div>
     <div class="input-container">
       <label>Link to Recipe</label>
-      <input type="text"  name="recipe-url" />
+      <input type="text"  name="recipe-url" value="{{rows[0]['url'] if rows[0]['url'] is not none else '' }}" />
     </div>
     <div class="input-container">
       <label>Serving Size</label>

@@ -86,7 +86,7 @@ def recipes_add():
         )
 
         cur.execute(
-            "INSERT INTO recipes ( recipe_name, cuisine, serving_size, prep_time, cook_time, total_time, instructions, additional_notes, img_str_file, recipe_search_id) values (?,?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO recipes ( recipe_name, cuisine, serving_size, prep_time, cook_time, total_time, instructions, additional_notes, img_str_file, recipe_search_id, url) values (?,?,?,?,?,?,?,?,?,?,?)",
             (
                 # request.form["recipe_id"], # autoincrements on its own?
                 request.form["name"],
@@ -99,6 +99,7 @@ def recipes_add():
                 request.form["notes"],
                 filename,
                 cur.lastrowid,
+                request.form["recipe-url"],
             ),
         )
 
@@ -124,6 +125,7 @@ def recipes_add():
                     "INSERT INTO ingredients  (name) values (?) ",
                     (request.form["ingredients-" + str(i)],),
                 )
+                conn.commit()
                 ingredient_id = cur.lastrowid
             else:
                 ingredient_id = ingred_exist[0]
@@ -194,7 +196,7 @@ def recipe_edit(recipe_id):
         print("INGREDIENT_NUMBER", type(request.form["ingredient-number"]))
 
         cur.execute(
-            "SELECT * FROM recipe_to_ingredients r INNER JOIN ingredients i ON r.recipe_id = ? AND r.ingredient_id = i.id",
+            "SELECT * FROM recipe_to_ingredients r INNER JOIN ingredients i ON r.ingredient_id = i.id WHERE r.recipe_id = ? ",
             (recipe_id,),
         )
         ingredients = cur.fetchall()
@@ -220,11 +222,23 @@ def recipe_edit(recipe_id):
                 )
                 conn.commit()
             else:
+
                 cur.execute(
-                    "INSERT INTO ingredients  (name) values (?) ",
-                    (request.form["ingredients-" + str(i)],),
+                    "SELECT id from ingredients WHERE name = ?",
+                    (n,),
                 )
-                ingredient_id = cur.lastrowid
+
+                ingred_exist = cur.fetchone()
+                ingredient_id = None
+                if ingred_exist is None:
+                    cur.execute(
+                        "INSERT INTO ingredients  (name) values (?) ",
+                        (n,),
+                    )
+                    conn.commit()
+                    ingredient_id = cur.lastrowid
+                else:
+                    ingredient_id = ingred_exist[0]
 
                 cur.execute(
                     "INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id, quantity, unit) values (?, ?, ?, ?)",
@@ -289,7 +303,7 @@ def recipe_edit(recipe_id):
         if filename == "":
 
             cur.execute(
-                "UPDATE recipes SET recipe_name = ?, cuisine = ?, serving_size = ?, prep_time = ?, cook_time = ?, total_time = ?, instructions = ?, additional_notes = ? WHERE recipe_id = ? AND deleted=0",
+                "UPDATE recipes SET recipe_name = ?, cuisine = ?, serving_size = ?, prep_time = ?, cook_time = ?, total_time = ?, instructions = ?, additional_notes = ?, url=? WHERE recipe_id = ? AND deleted=0",
                 (
                     request.form["name"],
                     request.form["cuisine"],
@@ -299,12 +313,13 @@ def recipe_edit(recipe_id):
                     float(request.form["prep-time"]) + float(request.form["cook-time"]),
                     request.form["instructions"],
                     request.form["notes"],
+                    request.form["recipe-url"],
                     recipe_id,
                 ),
             )
         else:
             cur.execute(
-                "UPDATE recipes SET recipe_name = ?, cuisine = ?, serving_size = ?, prep_time = ?, cook_time = ?, total_time = ?, instructions = ?, additional_notes = ?, img_str_file= ? WHERE recipe_id = ? AND deleted=0",
+                "UPDATE recipes SET recipe_name = ?, cuisine = ?, serving_size = ?, prep_time = ?, cook_time = ?, total_time = ?, instructions = ?, additional_notes = ?, url=?, img_str_file= ? WHERE recipe_id = ? AND deleted=0",
                 (
                     request.form["name"],
                     request.form["cuisine"],
@@ -314,6 +329,7 @@ def recipe_edit(recipe_id):
                     float(request.form["prep-time"]) + float(request.form["cook-time"]),
                     request.form["instructions"],
                     request.form["notes"],
+                    request.form["recipe-url"],
                     filename,
                     recipe_id,
                 ),
@@ -390,6 +406,16 @@ def ingred_edit(ingredient_id):
 def ingred():
     cur = get_db().cursor()
     cur.execute("SELECT * FROM ingredients WHERE quantity IS NOT NULL")
+    rows = cur.fetchall()
+
+    return render_template("ingredients.html", rows=rows)
+
+
+@app.route("/recipes/pantry/recipe")
+def ingred_from_recipe():
+    cur = get_db().cursor()
+
+    cur.execute("SELECT * FROM ingredients WHERE quantity IS NULL ORDER BY name")
     rows = cur.fetchall()
 
     return render_template("ingredients.html", rows=rows)
@@ -511,6 +537,24 @@ def favorites():
     return render_template("recipes.html", rows=rows)
 
 
+@app.route("/reset")
+def reset():
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("DROP TABLE items")
+    cur.execute("DROP TABLE locations")
+    cur.execute("DROP TABLE recipes")
+    cur.execute("DROP TABLE ingredients")
+    cur.execute("DROP TABLE recipe_to_ingredients")
+    cur.execute("DROP TABLE recipe_search")
+    cur.execute("DROP TABLE migration_log")
+    conn.commit()
+    with app.open_resource("dump.sql", mode="r") as f:
+        conn.cursor().executescript(f.read())
+    conn.commit()
+    return redirect("/recipes")
+
+
 # def get_records():
 #     with conn:
 #         cur.execute("SELECT * FROM items")
@@ -553,6 +597,7 @@ migrations = [
     "CREATE TABLE IF NOT EXISTS ingredients (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT,category TEXT,quantity FLOAT,unit TEXT,perishable TEXT,last_updated TEXT);",
     "ALTER TABLE recipes ADD COLUMN recipe_search_id INTEGER",
     "ALTER TABLE recipes ADD COLUMN favorite BOOLEAN DEFAULT FALSE",
+    "ALTER TABLE recipes ADD COLUMN url TEXT",
 ]
 
 
