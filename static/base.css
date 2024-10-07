@@ -20,7 +20,7 @@ body {
   color: var(--primary-brown);
   text-align: center;
   display: relative;
-  width: 175px;
+  /* width: 230px; */
 }
 #nav .icon {
   position: absolute;
@@ -29,6 +29,7 @@ body {
   padding-top: 12px;
   padding-right: 7px;
 }
+
 #nav a {
   margin-bottom: 20px;
   display: flex;
@@ -55,6 +56,7 @@ body {
 .filled {
   font-variation-settings: "FILL" 1;
 }
+
 #mobile-nav {
   display: none;
 }
