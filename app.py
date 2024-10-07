@@ -71,11 +71,16 @@ def recipes_add():
             flash("No file part")
             return redirect(request.url)
         file = request.files["add-image"]
+        prompt_prefix = ""
+        if len(request.form["name"]) == 0:
+            prompt_prefix = "waves"
+        else:
+            prompt_prefix = request.form["name"]
+
         if file.filename == "":
             response = client.images.generate(
                 model="dall-e-2",
-                prompt=request.form["name"]
-                + " high quality photography using Canon EOS R3.",
+                prompt=prompt_prefix + " high quality photography using Canon EOS R3.",
                 size="256x256",
                 quality="standard",
                 n=1,
@@ -168,7 +173,6 @@ def recipes_add():
 
         conn.commit()
 
-        # return redirect(url_for("/recipes/" + str(recipe_id), gen_img=gen_img))
         return redirect("/recipes/" + str(recipe_id))
     return render_template("add_recipe.html")
 
