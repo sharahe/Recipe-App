@@ -47,7 +47,7 @@
     This is a temporary public deployment for GHC 2024. Feel free to add and
     modify recipes, test out the AI features, or give these recipes a try!
   </p>
-  <p>To get started, visit the <a href="/">Recipes page</a>.</p>
+  <p>To get started, visit the <a href="https://recipes.sharahe.com/">Recipes page</a>.</p>
 
   <h3>Technical Tools used:</h3>
   <p>
