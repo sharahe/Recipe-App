@@ -17,3 +17,6 @@ To install/uninstall a new dependency, add package name to requirements.in, then
 
 To run locally:
 `flask run --debug`
+
+To dump sql db
+`sqlite3 database.db  .dump > dump.sql`
