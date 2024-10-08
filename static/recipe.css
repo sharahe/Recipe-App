@@ -120,7 +120,7 @@ pre {
   width: 100%;
 }
 .black {
-  color: black;
+  color: rgb(51, 51, 51);
 }
 .gray {
   color: rgb(156, 154, 154);

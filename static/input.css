@@ -67,6 +67,7 @@
 }
 .row {
   display: flex;
+  flex-direction: row;
 }
 .vertical-center {
   align-items: center;

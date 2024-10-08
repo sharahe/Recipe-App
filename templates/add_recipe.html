@@ -84,13 +84,22 @@ body %}
         <textarea rows="5" cols="70" name="notes"></textarea>
       </div>
       <div id="tips"></div>
-      <div class="input-container">
-        <button class="button" type="submit">Save Recipe</button>
+      <div class="input-container row">
+        <button id="save-recipe-button" class="button" type="submit">
+          Save Recipe
+        </button>
+        <div id="save-recipe-spinner" class="lds-dual-ring none"></div>
       </div>
     </div>
   </form>
 </div>
 <script type="module">
+  let element = document.getElementById("save-recipe-button");
+  element.onclick = () => {
+    let spinner = document.getElementById("save-recipe-spinner");
+    spinner.classList.toggle("none");
+  };
+
   import { render, Component } from "https://esm.sh/preact";
   import { App, html } from "/static/recipe-ingredients.js";
   const ingredients = document.getElementById("ingredients");
@@ -145,9 +154,14 @@ body %}
     render() {
       return html`
         <div class="input-container">
-          <label>${this.state.result == null ? "Video URL" : "Tips"}</label>
+          <label
+            >${this.state.result == null
+              ? "Video URL (YouTube)"
+              : "Tips"}</label
+          >
           ${this.state.result == null
-            ? html`<input type="text" onInput=${this.onUrlChange} />`
+            ? html`<input type="text" onInput=${this.onUrlChange} />
+                <input type="hidden" name="video-tips" />`
             : html`<textarea
                 class="form-id"
                 rows="5"

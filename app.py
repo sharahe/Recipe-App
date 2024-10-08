@@ -464,8 +464,8 @@ def ingred_from_recipe():
     return render_template("ingredients.html", rows=rows)
 
 
-@app.route("/suggest")
-def suggest():
+@app.route("/generate_suggestions")
+def generate_suggestions():
     cur = get_db().cursor()
     cur.execute("SELECT name FROM ingredients WHERE quantity IS NOT NULL")
     rows = cur.fetchall()
@@ -542,13 +542,20 @@ Tell me which of the recipes I have provided is a good match for the ingredients
             "SELECT * FROM recipes WHERE deleted = 0 and recipe_id = ?",
             (recipe_id,),
         )
-        recipe_details = cur.fetchone()
+        recipe_details = {
+            "name": cur.fetchone()["recipe_name"],
+            "id": i["id"],
+            "reasoning": i["reasoning"],
+        }
         top_recipes.append(recipe_details)
         # print(recipe_details["recipe_name"])
 
-    return render_template(
-        "suggest.html", rows=rows, chat=output, top_recipes=top_recipes
-    )
+    return {"recipes": top_recipes}
+
+
+@app.route("/suggest")
+def suggest():
+    return render_template("suggest.html")
 
 
 @app.route("/search")

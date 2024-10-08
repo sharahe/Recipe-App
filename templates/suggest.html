@@ -2,19 +2,40 @@
 block body %}
 <div class="column align-center">
   <div class="center-header">Suggested Recipes (AI Assist)</div>
-  <div class="recipe-details">
-    <div class="gpt-response align-center">
-      <ol>
-        {% for i in chat["recipes"] %}
-        <li>
-          <a href="/{{i['id']}}"
-            >{{top_recipes[loop.index0]["recipe_name"]}}
-          </a>
-          - {{i["reasoning"]}}
-        </li>
-        {% endfor %}
-      </ol>
-    </div>
-  </div>
+  <div id="gpt-response-wrapper" class="recipe-details"></div>
 </div>
+<script type="module">
+  import { render, Component } from "https://esm.sh/preact";
+  import { App, html } from "/static/recipe-ingredients.js";
+
+  class Suggestion extends Component {
+    state = { result: null };
+
+    componentDidMount() {
+      fetch("/generate_suggestions")
+        .then((r) => r.json())
+        .then((j) => {
+          console.log(j);
+          this.setState({ result: j });
+        });
+    }
+
+    render() {
+      return html`<div class="gpt-response align-center">
+        ${this.state.result == null
+          ? html`<div class="lds-dual-ring"></div>`
+          : html`<ol>
+              ${this.state.result.recipes.map(
+                (i) => html`<li>
+                  <a href="/${i.id}"> ${i.name}</a> - ${i.reasoning}
+                </li>`
+              )}
+            </ol>`}
+      </div>`;
+    }
+  }
+
+  const gpt_resp = document.getElementById("gpt-response-wrapper");
+  render(html`<${Suggestion} />`, gpt_resp);
+</script>
 {% endblock %}
