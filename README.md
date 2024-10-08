@@ -57,7 +57,7 @@
   <p>
     Learn more about my technical experience
     <a
-      href="https://drive.google.com/file/d/1pNNcLIKIlKn95N7T1B0vt-15OpMUZyQ2/view?usp=sharing"
+      href="https://bit.ly/4dH8nt4"
       >here</a
     >. Feel free to find me on
     <a href="https://www.linkedin.com/in/sharahe">Linkedin</a>.
