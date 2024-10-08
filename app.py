@@ -570,7 +570,7 @@ def search_recipe():
     )
     rows = cur.fetchall()
 
-    return render_template("search_recipe.html", rows=rows, keyword=keyword)
+    return render_template("recipes.html", rows=rows, keyword=keyword)
 
 
 @app.route("/import_search")

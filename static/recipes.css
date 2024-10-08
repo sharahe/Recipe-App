@@ -60,22 +60,17 @@ img {
   display: grid;
   padding: 20px;
   padding-top: 10px;
-
   width: 100%;
-  /* max-width: 1000px; */
-
-  /* grid-template-columns: repeat(3, 1fr);
-  row-gap: 20px;
-  column-gap: 20px;
-  width: 1000px; */
   --min: 25ch;
-  --gap: 1rem;
+  --gap: 2rem;
+
   grid-gap: var(--gap);
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--min)), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--min)), 1fr));
 }
+
 .recipe {
   width: 100%;
-  /* background-color: rgba(239, 198, 127, 0.58); */
+
   background-color: var(--secondary-green);
   border-radius: 15px;
   display: flex;
