@@ -630,6 +630,11 @@ def favorites():
     return render_template("recipes.html", rows=rows)
 
 
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+
 @app.route("/reset")
 def reset():
     conn = get_db()

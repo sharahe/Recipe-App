@@ -1,0 +1,25 @@
+.about-content {
+  & p {
+    margin-block-start: 0.5em;
+    margin-block-end: 0.5em;
+  }
+  & ol,
+  & ul {
+    margin-block-start: 0.5em;
+    margin-block-end: 0.5em;
+  }
+  display: flex;
+
+  flex-direction: column;
+  padding: 20px;
+  margin: auto;
+}
+
+.about-content a {
+  color: var(--primary-green);
+}
+@media (min-width: 650px) {
+  .about-content {
+    width: 600px;
+  }
+}

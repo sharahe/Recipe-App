@@ -1,6 +1,7 @@
-# Recipe-App
-
-<h3>Hi, I'm Shara!</h3>
+{% extends "base.html" %} {% block title %}About Recipe-App {% endblock %} {%
+block body %}
+<div class="about-content">
+  <h3>Hi, I'm Shara!</h3>
   <p>
     I love eating food and trying new recipes. Who doesn't? After cooking a lot
     of recipes, I was facing 3 main problems:
@@ -61,26 +62,6 @@
       >here</a
     >. Feel free to find me on
     <a href="https://www.linkedin.com/in/sharahe">Linkedin</a>.
-
-# Technical
-
-Using https://github.com/astral-sh/uv for package management.
-
-To setup virtual environment:
-`uv venv`
-
-To activate virtual environment:
-`source .venv/bin/activate`
-
-To install dependencies from requirements.txt:
-`uv pip sync requirements.txt`
-
-To install/uninstall a new dependency, add package name to requirements.in, then compile and sync
-`uv pip compile requirements.in -o requirements.txt`
-`uv pip sync requirements.txt`
-
-To run locally:
-`flask run --debug`
-
-To dump sql db
-`sqlite3 database.db  .dump > dump.sql`
+  </p>
+</div>
+{% endblock %}
