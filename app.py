@@ -382,20 +382,6 @@ def recipe_edit(recipe_id):
     return render_template("edit_recipe.html", rows=rows)
 
 
-@app.route("/<int:recipe_id>/delete")
-def recipe_delete(recipe_id):
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute(
-        "SELECT recipe_search_id from recipes where recipe_id = ?", (recipe_id,)
-    )
-    row = cur.fetchone()
-    cur.execute("DELETE FROM recipe_search where rowid = ?", (row[0],))
-    cur.execute("UPDATE recipes SET deleted=TRUE WHERE recipe_id = ?", (recipe_id,))
-    conn.commit()
-    return redirect("/")
-
-
 @app.route("/pantry/add", methods=["POST", "GET"])
 def ingred_add():
     if request.method == "POST":
